@@ -11,6 +11,7 @@ Duration: 8m 31.1s
 - Changed scale argument to default TRUE for scaling vector length with MDISC.
 - Orthogonal model now reoprts DISC instead of MDISC
 - D and C removed from table when reporting direction cosines
+- rgl was moved to imports since its only used for plotting results
 
 
 
