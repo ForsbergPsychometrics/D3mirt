@@ -53,13 +53,13 @@ Regarding the former, this includes visualization of the single multidimensional
 The function also returns respondent trait scores that can be plotted with \link{plot} as spheres located in the three-dimensional latent space.
 In turn, this allows for studying respondent profiles using the plot function (for more on profiles, see function documentation on \link{plot}).
 
-There are two types of models available for D3mirt analysis. The default model is the basic DMIRT model (Reckase, 2009, 1985, Reckase & McKinley, 1991) that relaxes the assumption of unidimensionality in the items while restricting the latent space to be orthogonal.
+There are two types of models available for D3mirt analysis. The default model is the basic DMIRT model (Reckase, 2009, 1985, Reckase & McKinley, 1991), based on the MDISC, that relaxes the assumption of unidimensionality in the items while restricting the latent space to be orthogonal.
 To use the default option requires first selecting two items to identify the model. This can be done manually with the \code{modid} argument in the function call to \code{D3mirt}.
 However, it is advisable to use the dedicated function \link{modid} included in the package for this purpose (for more on model identification see function documentation for \link{modid}).
 In contrast, the optional orthogonal model constrains the items to be strictly parallel with the axes (see example section below).
 Consequently, this option allows the user to investigate the model under the assumption that the items are strictly unidimensional and orthogonally oriented in the latent space.
 In this context "orthogonal" refers to the perpendicular orientation of the item vectors the model specification creates.
-Note that using the optional model will also affect respondent locations in the latent space accordingly.
+Note that using the optional model will result in reporting unidimensional discrimination parameters (DISC) and the shift in item orientation will affect respondent locations in the latent space.
 It is also possible to specify a unique model with the help of the \code{model} argument in the function call to \code{D3mirt} if written in mirt (Chalmers, 2012) syntax (for an example, see the appendix in the package vignette).
 
 The user also has the option of including constructs in the estimation.

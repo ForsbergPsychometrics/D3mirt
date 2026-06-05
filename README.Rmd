@@ -9,9 +9,10 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+devtools::load_all()
 ```
 
-```{r setup, message = FALSE, include = FALSE}
+```{r setup, message = FALSE, include = FALSE, eval = FALSE}
 library(D3mirt)
 ```
 
@@ -119,9 +120,9 @@ The order of the factors follows the model identification items so that item 1 c
 
 # 2. D3mirt Model Estimation
 
-The `D3mirt()` function holds two built-in models. The first model is the default model, i.e., the three-dimensional compensatory model, and the latter is the *orthogonal model*, i.e., a restricted model in which the assumption of within-multidimensionality is removed. In this context, *orthogonal* refers to the strict perpendicular orientation of the items in the latent space. The choice of model depends on the vector used in the `modid` argument when calling `D3mirt()` (see examples below).
+The `D3mirt()` function holds two built-in models. The first model is the default model, i.e., the three-dimensional compensatory model, and the latter is the *orthogonal model*, i.e., a restricted model in which the assumption of within-multidimensionality is removed. In this context, *orthogonal* refers to the strict perpendicular orientation of the items constrined to follow unidimensional structures in the latent space. The choice of model depends on the vector used in the `modid` argument when calling `D3mirt()` (see examples below).
 
-Calling `D3mirt()` returns an $S3$ object of class `D3mirt` with lists containing $a$ and $d$ from the compensatory model, and the $MDISC$, and $MDIFF$ parameters, direction cosines, and spherical coordinates for the item vectors from the DMIRT model. Regarding the latter, spherical coordinates are represented by $\theta$ and $\phi$. The $\theta$ coordinate is the positive or negative angle in degrees, starting from the $x$-axis, of the vector projections from the vector arrows in the $xz$-plane up to $\pm 180°$. Note that the $\theta$ angle is oriented following the positive pole of the $x$ and $z$ axis so that the angle increases clockwise in the graphical output. The $\phi$ coordinate is the positive angle in degrees from the $y$-axis and the vectors. Note, the $\rho$ coordinate from the spherical coordinate system is in DMIRT represented by the $MDIFF$, and so is reported separately.
+Calling `D3mirt()` returns an $S3$ object of class `D3mirt` with lists containing $a$ and $d$ from the compensatory model, and the $MDISC$ ($DISC$ parameters when the orthogonal model is used), and $MDIFF$ parameters, direction cosines, and spherical coordinates for the item vectors from the DMIRT model. Regarding the latter, spherical coordinates are represented by $\theta$ and $\phi$. The $\theta$ coordinate is the positive or negative angle in degrees, starting from the $x$-axis, of the vector projections from the vector arrows in the $xz$-plane up to $\pm 180°$. Note that the $\theta$ angle is oriented following the positive pole of the $x$ and $z$ axis so that the angle increases clockwise in the graphical output. The $\phi$ coordinate is the positive angle in degrees from the $y$-axis and the vectors. Note, the $\rho$ coordinate from the spherical coordinate system is in DMIRT represented by the $MDIFF$, and so is reported separately.
 
 Constructs can be included in the analysis by creating one or more nested lists that indicate what items belong to what construct (see example below) and using it in the `con.items` argument. From this, the `D3mirt()` function finds the average direction of the subset of items contained in each nested list by adding and normalizing the direction cosines for the items and scaling the construct direction vector to an arbitrary length (the length can be adjusted by the user) so that the arrows can be seen when plotting. To use spherical coordinates, the user must create a nested list containing spherical coordinate pairs in the same format as the item indicators. For example: `con <- list(c(0, 45))`, and so on. The `con` vector, in the latter case, gives one construct vector located $45^{\circ}$ strictly above the $x$-axis in the latent space.
 
@@ -150,7 +151,7 @@ summary(mod3)
 
 The `D3mirt()` function prints a short report containing the number of items used and the number of difficulty levels when the estimation is done. As can be seen, when construct vectors are used, the function also prints the number of construct vectors and the names of the items included in each construct. Next, the factor loadings and the difficulty parameters from the compensatory model are reported in data frames, followed by all necessary DMIRT estimates.
 
-Regarding the orthogonal model, the function call must include nested lists indicating which items should be constrained to either of the axes. Below is an example in which items $1$ to $10$ are constrained to the $x$-axes, items $15$ to $19$ to the $y$-axis, and items $11$ to $14$ to the $z$-axis. Note that fitting the orthogonal model often requires removing misfitting items. Otherwise, the orthogonal model most likely will amplify the misfit tendencies. In this case, item W7Q16 was removed before fitting the model.
+Regarding the orthogonal model, the function call must include nested lists indicating which items should be constrained to either of the axes. Below is an example in which items $1$ to $10$ are constrained to the $x$-axes, items $15$ to $19$ to the $y$-axis, and items $11$ to $14$ to the $z$-axis. Note that fitting the orthogonal model often requires removing misfitting items. Otherwise, the orthogonal model most likely will amplify the misfit tendencies. In this case, item W7Q16 was removed before fitting the model. 
 
 ```{r}
 # Optional: Load the mod2 data as a data frame directly from the package file
@@ -169,11 +170,11 @@ mod2 <- D3mirt(y, modid = list(c(1:10),   # x-axis
 summary(mod2)
 ```
 
-In the output, the simple loading structure can be seen. Aldo note that $\theta$ reports `NaN` when both $\theta$ and $\phi$ is zero. This is because when converting to spherical coordinates, items oriented parallel to the $y$-axis will have $\cos (0)$ in the denominator of the $\arctan$ function, resulting in undefined values.
+In the output, the simple loading structure can be seen. Note that because the item loadings have been constrained, the $MDISC$ is replaced with the $DDISC$ since the discrimination is no longer optimized. Also note that $\theta$ reports `NaN` when both $\theta$ and $\phi$ is zero. This is because when converting to spherical coordinates, items oriented parallel to the $y$-axis will have $\cos (0)$ in the denominator of the $\arctan$ function, resulting in undefined values.
 
 # 3. Plotting
 
-The `plot()` method for objects of class `D3mirt` is built on the `rgl` package (Adler & Murdoch, 2023) for visualization with OpenGL. Graphing in default mode by calling `plot()` will return an RGL device appearing in an external window as a three-dimensional interactive object containing vector arrows with the latent dimensions running along the orthogonal axes that can be rotated. In this illustration, however, all RGL devices are plotted inline as still shots displayed from two angles, $15^{\circ}$ (clockwise; default plot angle) and $90^{\circ}$. To change the plot output to $90^{\circ}$, use the `view` argument in the `plot()` function and change the first indicator from $15$ to $90$.
+The `plot()` method for objects of class `D3mirt` is built on the `rgl` package (Adler & Murdoch, 2023) for visualization with OpenGL. Graphing in default mode by calling `plot()` will return an RGL device appearing in the console as a three-dimensional interactive object containing vector arrows with the latent dimensions running along the orthogonal axes that can be rotated. In this illustration, however, all RGL devices are plotted inline as still shots displayed from two angles, $15^{\circ}$ (clockwise; default plot angle) and $90^{\circ}$. To change the plot output to $90^{\circ}$, use the `view` argument in the `plot()` function and change the first indicator from $15$ to $90$.
 
 ```{r, eval = FALSE}
 # Plot RGL device with constructs visible and named
@@ -264,11 +265,11 @@ Figure 9: All items plotted on difficulty level 5 and with the model rotated $90
 
 ## 3.3 `scale`
 
-The `D3mirt()` function returns item vector coordinates estimated with and without the $MDISC$ as a scalar for the arrow length. When the $MDISC$ is not used for the arrow length, all item vector arrows are scaled to one unit length. This allows the user to graph the item vector arrows with `plot()` set to a uniform length. This can help reduce visual clutter in the graphical output. To view the item vector arrows without the $MDISC$, set `scale = TRUE`.
+The `D3mirt()` function returns item vector coordinates estimated with and without the $MDISC$ as a scalar for the arrow length. When the $MDISC$ is not used for the arrow length, all item vector arrows are scaled to one unit length. This allows the user to graph the item vector arrows with `plot()` set to a uniform length. This can help reduce visual clutter in the graphical output. To view the item vector arrows without the $MDISC$, set `scale = FALSE`.
 
 ```{r, eval = FALSE}
 # Plot RGL device with items in uniform length and constructs visible and named
-plot(mod3, scale = TRUE, 
+plot(mod3, scale = FALSE, 
         constructs = TRUE, 
         construct.lab = c("Compassion", "Fairness", "Conformity"))
 ```

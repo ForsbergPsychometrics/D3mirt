@@ -27,13 +27,13 @@
 #' The function also returns respondent trait scores that can be plotted with [D3mirt::plot] as spheres located in the three-dimensional latent space.
 #' In turn, this allows for studying respondent profiles using the plot function (for more on profiles, see function documentation on [D3mirt::plot]).
 #'
-#' There are two types of models available for D3mirt analysis. The default model is the basic DMIRT model (Reckase, 2009, 1985, Reckase & McKinley, 1991) that relaxes the assumption of unidimensionality in the items while restricting the latent space to be orthogonal.
+#' There are two types of models available for D3mirt analysis. The default model is the basic DMIRT model (Reckase, 2009, 1985, Reckase & McKinley, 1991), based on the MDISC, that relaxes the assumption of unidimensionality in the items while restricting the latent space to be orthogonal.
 #' To use the default option requires first selecting two items to identify the model. This can be done manually with the `modid` argument in the function call to `D3mirt`.
 #' However, it is advisable to use the dedicated function [D3mirt::modid] included in the package for this purpose (for more on model identification see function documentation for [D3mirt::modid]).
 #' In contrast, the optional orthogonal model constrains the items to be strictly parallel with the axes (see example section below).
 #' Consequently, this option allows the user to investigate the model under the assumption that the items are strictly unidimensional and orthogonally oriented in the latent space.
 #' In this context "orthogonal" refers to the perpendicular orientation of the item vectors the model specification creates.
-#' Note that using the optional model will also affect respondent locations in the latent space accordingly.
+#' Note that using the optional model will result in reporting unidimensional discrimination parameters (DISC) and the shift in item orientation will affect respondent locations in the latent space.
 #' It is also possible to specify a unique model with the help of the `model` argument in the function call to `D3mirt` if written in mirt (Chalmers, 2012) syntax (for an example, see the appendix in the package vignette).
 #'
 #' The user also has the option of including constructs in the estimation.
@@ -283,7 +283,7 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
       con <- as.matrix(rbind(con,rbind(minnorm, maxnorm)), ncol = 3)
       ncos <- as.matrix(rbind(ncos,cdcos), ncol = 3)
       theta <- NULL
-      for (i in seq(nrow(cdcos))){
+      for (i in seq(nrow(cdcos))){ # finns bara en rad i cdcos?
         c <- cdcos[i,1]
         d <- cdcos[i,3]
         if (c < 0 && d >= 0){
@@ -316,10 +316,15 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
   for (i in ncol(mdiff)){
     colnames(mdiff) <- paste("MDIFF", 1:i, sep = "")
   }
-  mdisc <- as.data.frame(mdisc)
-  colnames(mdisc) <- c("MDISC")
+  disc <- as.data.frame(mdisc)
+  if (length(modid) == 2){
+    colnames(disc) <- c("MDISC")
+  }
+  if (length(modid) == 3){
+    colnames(disc) <- c("DISC")
+  }
   dcos <- as.data.frame(dcos)
-  colnames(dcos) <- c("D.Cos X", "D.Cos Y", "D.Cos Z")
+  colnames(dcos) <- c("Cos X", "Cos Y", "Cos Z")
   sph <- as.data.frame(sph)
   colnames(sph) <- c("Theta", "Phi")
   if (ndiff == 1){
@@ -331,7 +336,7 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
   }
   if (!is.null(con.items) || !is.null(con.sphe)){
     ncos <- as.data.frame(ncos)
-    colnames(ncos) <- c("C.Cos X","C.Cos Y", "C.Cos Z")
+    colnames(ncos) <- c("Cos X","Cos Y", "Cos Z")
     csph <- as.data.frame(csph)
     colnames(csph) <- c("Theta", "Phi")
     for (i in nrow(csph)){
@@ -343,16 +348,16 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
     }
   }
   if (!is.null(con.items)){
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, mdisc = mdisc, mdiff = mdiff, dir.cos = dcos, spherical = sph, c.dir.cos = ncos , c.spherical = csph, ddisc = ddisc,
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles = sph, c.dir.cos = ncos , c.spherical = csph, ddisc = ddisc,
                    dir.vec = dir.vec, scal.vec = scal.vec, con.items = con.items,  c.vec = con, fscores = trait)
   } else if (!is.null(con.sphe)){
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, mdisc = mdisc, mdiff = mdiff, dir.cos = dcos, spherical = sph, c.dir.cos = ncos , c.spherical = csph, ddisc = ddisc,
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles = sph, c.dir.cos = ncos , c.spherical = csph, ddisc = ddisc,
                    dir.vec = dir.vec, scal.vec = scal.vec, con.sphe = con.sphe,  c.vec = con, fscores = trait)
   } else if (!is.null(trait)) {
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, mdisc = mdisc, mdiff = mdiff, dir.cos = dcos, spherical = sph, diff = diff,
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles = sph, diff = diff,
                    dir.vec = dir.vec, scal.vec = scal.vec, fscores = trait)
   } else {
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, mdisc = mdisc, mdiff = mdiff, dir.cos = dcos, spherical = sph, diff = diff,
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles= sph, diff = diff,
                    dir.vec = dir.vec, scal.vec = scal.vec)
   }
   class(D3mirt) <- "D3mirt"

@@ -17,3 +17,6 @@
 ^paper.md$
 ^paper.pdf$
 ^refs.bib$
+^\.positai$
+^\.claude$
+^IntrotoD3mirt.Rmd

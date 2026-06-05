@@ -289,14 +289,15 @@ the default model, i.e., the three-dimensional compensatory model, and
 the latter is the *orthogonal model*, i.e., a restricted model in which
 the assumption of within-multidimensionality is removed. In this
 context, *orthogonal* refers to the strict perpendicular orientation of
-the items in the latent space. The choice of model depends on the vector
-used in the `modid` argument when calling `D3mirt()` (see examples
-below).
+the items constrined to follow unidimensional structures in the latent
+space. The choice of model depends on the vector used in the `modid`
+argument when calling `D3mirt()` (see examples below).
 
 Calling `D3mirt()` returns an $S3$ object of class `D3mirt` with lists
-containing $a$ and $d$ from the compensatory model, and the $MDISC$, and
-$MDIFF$ parameters, direction cosines, and spherical coordinates for the
-item vectors from the DMIRT model. Regarding the latter, spherical
+containing $a$ and $d$ from the compensatory model, and the $MDISC$
+($DISC$ parameters when the orthogonal model is used), and $MDIFF$
+parameters, direction cosines, and spherical coordinates for the item
+vectors from the DMIRT model. Regarding the latter, spherical
 coordinates are represented by $\theta$ and $\phi$. The $\theta$
 coordinate is the positive or negative angle in degrees, starting from
 the $x$-axis, of the vector projections from the vector arrows in the
@@ -360,97 +361,97 @@ summary(mod3)
 #> 
 #> 
 #>           a1      a2      a3      d1     d2     d3      d4      d5
-#> W7Q1  2.0297  0.1645 -0.1227  8.0868 7.0641 5.9876  3.2016 -0.4834
-#> W7Q2  2.6215 -0.0025 -0.2576  9.2884 6.6186 4.5103  1.6650 -2.4437
-#> W7Q3  2.7932  0.0000  0.0000 10.4884 7.5922 5.6797  2.7181 -1.1790
-#> W7Q4  1.9043  0.1877  0.1502  7.3749 6.0464 4.9812  2.4830 -1.1144
-#> W7Q5  2.2427 -0.0285 -0.0836  8.4293 6.6722 4.9055  1.8256 -1.8316
-#> W7Q6  2.0020  0.2392  0.1578  8.0687 6.3578 4.9521  2.3301 -1.0187
-#> W7Q7  1.6284  0.1036  0.3600  6.0180 4.8976 3.6909  1.6326 -1.3483
-#> W7Q8  1.7773  0.2254  0.3536  6.9174 5.1824 3.7663  1.4845 -1.8331
-#> W7Q9  1.7197  0.2495  0.1286  7.5588 4.9756 3.3649  0.9344 -2.2093
-#> W7Q10 1.7697  0.1274 -0.1404  8.3641 5.7399 4.2865  1.9648 -0.6641
-#> W7Q11 1.4237  0.4680  1.0449  6.2204 4.6938 3.5443  1.1923 -1.8579
-#> W7Q12 0.7601  0.0413  0.9370  4.1361 2.8772 2.3420  1.1791 -0.4240
-#> W7Q13 1.1265  0.2914  1.6908  5.8838 4.3950 3.4385  1.8931 -0.6004
-#> W7Q14 0.7444  0.4832  0.9787  5.3893 3.9334 3.0259  0.8144 -1.5869
-#> W7Q15 0.4551  0.7871 -0.1607  4.3208 3.0545 2.3970  0.9187 -0.9705
-#> W7Q16 0.6236  0.4141  0.1798  3.7249 2.0305 1.1658 -0.0612 -1.8084
-#> W7Q17 1.1891  1.3414  0.0561  6.9016 5.8026 4.9348  2.7917 -0.0040
-#> W7Q18 0.4106  1.3543 -0.1372  3.7838 2.0986 1.4183  0.1829 -1.9855
-#> W7Q19 0.8578  1.4100  0.2278  4.4979 2.6484 1.6731  0.3741 -1.9966
-#> W7Q20 0.7355  1.9066  0.0000  4.6376 2.3632 1.2791 -0.3430 -2.9188
+#> W7Q1  2.0298  0.1644 -0.1231  8.0868 7.0642 5.9877  3.2015 -0.4835
+#> W7Q2  2.6215 -0.0027 -0.2582  9.2888 6.6187 4.5102  1.6649 -2.4439
+#> W7Q3  2.7923  0.0000  0.0000 10.4891 7.5886 5.6776  2.7172 -1.1789
+#> W7Q4  1.9045  0.1875  0.1494  7.3752 6.0466 4.9813  2.4830 -1.1145
+#> W7Q5  2.2425 -0.0287 -0.0840  8.4276 6.6711 4.9049  1.8253 -1.8316
+#> W7Q6  2.0022  0.2390  0.1570  8.0687 6.3578 4.9521  2.3300 -1.0188
+#> W7Q7  1.6286  0.1034  0.3595  6.0178 4.8974 3.6908  1.6326 -1.3484
+#> W7Q8  1.7774  0.2252  0.3530  6.9172 5.1822 3.7661  1.4844 -1.8331
+#> W7Q9  1.7198  0.2494  0.1280  7.5587 4.9755 3.3649  0.9343 -2.2094
+#> W7Q10 1.7696  0.1273 -0.1406  8.3640 5.7397 4.2863  1.9647 -0.6642
+#> W7Q11 1.4237  0.4675  1.0438  6.2187 4.6925 3.5434  1.1920 -1.8575
+#> W7Q12 0.7604  0.0410  0.9367  4.1360 2.8771 2.3419  1.1790 -0.4239
+#> W7Q13 1.1280  0.2911  1.6933  5.8900 4.3993 3.4417  1.8949 -0.6008
+#> W7Q14 0.7447  0.4829  0.9785  5.3891 3.9333 3.0258  0.8144 -1.5868
+#> W7Q15 0.4551  0.7870 -0.1606  4.3207 3.0545 2.3969  0.9187 -0.9705
+#> W7Q16 0.6237  0.4140  0.1798  3.7249 2.0305 1.1658 -0.0612 -1.8085
+#> W7Q17 1.1892  1.3412  0.0563  6.9012 5.8023 4.9345  2.7916 -0.0041
+#> W7Q18 0.4106  1.3542 -0.1369  3.7837 2.0985 1.4183  0.1828 -1.9855
+#> W7Q19 0.8580  1.4099  0.2279  4.4978 2.6484 1.6730  0.3741 -1.9966
+#> W7Q20 0.7357  1.9067  0.0000  4.6378 2.3633 1.2791 -0.3430 -2.9190
 #> 
 #>        MDISC  MDIFF1  MDIFF2  MDIFF3  MDIFF4 MDIFF5
-#> W7Q1  2.0401 -3.9640 -3.4627 -2.9350 -1.5693 0.2370
-#> W7Q2  2.6341 -3.5262 -2.5127 -1.7123 -0.6321 0.9277
-#> W7Q3  2.7932 -3.7550 -2.7181 -2.0334 -0.9731 0.4221
-#> W7Q4  1.9194 -3.8423 -3.1502 -2.5952 -1.2936 0.5806
-#> W7Q5  2.2444 -3.7557 -2.9728 -2.1857 -0.8134 0.8160
-#> W7Q6  2.0224 -3.9897 -3.1437 -2.4486 -1.1521 0.5037
-#> W7Q7  1.6710 -3.6015 -2.9310 -2.2088 -0.9771 0.8069
-#> W7Q8  1.8261 -3.7881 -2.8380 -2.0625 -0.8130 1.0038
-#> W7Q9  1.7425 -4.3380 -2.8555 -1.9311 -0.5362 1.2679
-#> W7Q10 1.7798 -4.6995 -3.2251 -2.4084 -1.1040 0.3731
-#> W7Q11 1.8269 -3.4048 -2.5692 -1.9400 -0.6526 1.0170
-#> W7Q12 1.2073 -3.4260 -2.3832 -1.9399 -0.9766 0.3512
-#> W7Q13 2.0525 -2.8667 -2.1413 -1.6753 -0.9223 0.2925
-#> W7Q14 1.3211 -4.0792 -2.9772 -2.2903 -0.6164 1.2011
-#> W7Q15 0.9232 -4.6800 -3.3085 -2.5963 -0.9951 1.0512
-#> W7Q16 0.7699 -4.8384 -2.6375 -1.5143  0.0795 2.3490
-#> W7Q17 1.7935 -3.8482 -3.2354 -2.7515 -1.5566 0.0022
-#> W7Q18 1.4218 -2.6613 -1.4761 -0.9976 -0.1286 1.3965
-#> W7Q19 1.6661 -2.6997 -1.5896 -1.0042 -0.2245 1.1984
-#> W7Q20 2.0436 -2.2694 -1.1564 -0.6259  0.1678 1.4283
+#> W7Q1  2.0402 -3.9638 -3.4626 -2.9349 -1.5692 0.2370
+#> W7Q2  2.6342 -3.5262 -2.5126 -1.7122 -0.6320 0.9277
+#> W7Q3  2.7923 -3.7565 -2.7177 -2.0333 -0.9731 0.4222
+#> W7Q4  1.9195 -3.8422 -3.1500 -2.5951 -1.2935 0.5806
+#> W7Q5  2.2442 -3.7553 -2.9726 -2.1856 -0.8133 0.8161
+#> W7Q6  2.0225 -3.9895 -3.1436 -2.4485 -1.1521 0.5038
+#> W7Q7  1.6710 -3.6013 -2.9308 -2.2087 -0.9770 0.8069
+#> W7Q8  1.8261 -3.7880 -2.8379 -2.0624 -0.8129 1.0039
+#> W7Q9  1.7425 -4.3378 -2.8554 -1.9310 -0.5362 1.2679
+#> W7Q10 1.7798 -4.6995 -3.2250 -2.4083 -1.1039 0.3732
+#> W7Q11 1.8262 -3.4053 -2.5696 -1.9403 -0.6527 1.0172
+#> W7Q12 1.2072 -3.4262 -2.3833 -1.9400 -0.9767 0.3512
+#> W7Q13 2.0553 -2.8657 -2.1404 -1.6745 -0.9219 0.2923
+#> W7Q14 1.3211 -4.0793 -2.9773 -2.2904 -0.6164 1.2011
+#> W7Q15 0.9232 -4.6801 -3.3085 -2.5963 -0.9951 1.0512
+#> W7Q16 0.7699 -4.8383 -2.6374 -1.5142  0.0795 2.3490
+#> W7Q17 1.7934 -3.8481 -3.2353 -2.7514 -1.5566 0.0023
+#> W7Q18 1.4217 -2.6613 -1.4760 -0.9976 -0.1286 1.3966
+#> W7Q19 1.6661 -2.6996 -1.5896 -1.0042 -0.2246 1.1984
+#> W7Q20 2.0437 -2.2693 -1.1564 -0.6259  0.1679 1.4282
 #> 
-#>       D.Cos X D.Cos Y D.Cos Z    Theta     Phi
-#> W7Q1   0.9949  0.0806 -0.0601  -3.4590 85.3756
-#> W7Q2   0.9952 -0.0010 -0.0978  -5.6133 90.0554
-#> W7Q3   1.0000  0.0000  0.0000   0.0000 90.0000
-#> W7Q4   0.9921  0.0978  0.0783   4.5098 84.3885
-#> W7Q5   0.9992 -0.0127 -0.0372  -2.1341 90.7284
-#> W7Q6   0.9899  0.1183  0.0780   4.5068 83.2064
-#> W7Q7   0.9745  0.0620  0.2154  12.4657 86.4441
-#> W7Q8   0.9733  0.1235  0.1936  11.2521 82.9082
-#> W7Q9   0.9869  0.1432  0.0738   4.2769 81.7671
-#> W7Q10  0.9943  0.0716 -0.0789  -4.5357 85.8965
-#> W7Q11  0.7793  0.2561  0.5719  36.2765 75.1588
-#> W7Q12  0.6296  0.0342  0.7761  50.9493 88.0399
-#> W7Q13  0.5488  0.1420  0.8238  56.3262 81.8384
-#> W7Q14  0.5634  0.3657  0.7408  52.7448 68.5472
-#> W7Q15  0.4929  0.8525 -0.1740 -19.4451 31.5154
-#> W7Q16  0.8101  0.5378  0.2335  16.0800 57.4627
-#> W7Q17  0.6630  0.7479  0.0313   2.7031 41.5881
-#> W7Q18  0.2888  0.9525 -0.0965 -18.4742 17.7264
-#> W7Q19  0.5148  0.8463  0.1367  14.8712 32.1870
-#> W7Q20  0.3599  0.9330  0.0000   0.0000 21.0939
+#>        Cos X   Cos Y   Cos Z    Theta     Phi
+#> W7Q1  0.9949  0.0806 -0.0603  -3.4706 85.3794
+#> W7Q2  0.9952 -0.0010 -0.0980  -5.6260 90.0585
+#> W7Q3  1.0000  0.0000  0.0000   0.0000 90.0000
+#> W7Q4  0.9922  0.0977  0.0778   4.4855 84.3944
+#> W7Q5  0.9992 -0.0128 -0.0374  -2.1440 90.7315
+#> W7Q6  0.9900  0.1182  0.0776   4.4845 83.2120
+#> W7Q7  0.9746  0.0619  0.2151  12.4474 86.4516
+#> W7Q8  0.9734  0.1233  0.1933  11.2337 82.9150
+#> W7Q9  0.9870  0.1431  0.0735   4.2580 81.7718
+#> W7Q10 0.9943  0.0715 -0.0790  -4.5440 85.8998
+#> W7Q11 0.7796  0.2560  0.5716  36.2463 75.1671
+#> W7Q12 0.6299  0.0340  0.7759  50.9302 88.0523
+#> W7Q13 0.5488  0.1416  0.8239  56.3308 81.8572
+#> W7Q14 0.5637  0.3655  0.7407  52.7288 68.5590
+#> W7Q15 0.4929  0.8525 -0.1739 -19.4354 31.5152
+#> W7Q16 0.8101  0.5377  0.2336  16.0840 57.4727
+#> W7Q17 0.6631  0.7479  0.0314   2.7124 41.5948
+#> W7Q18 0.2888  0.9525 -0.0963 -18.4334 17.7253
+#> W7Q19 0.5150  0.8462  0.1368  14.8754 32.1960
+#> W7Q20 0.3600  0.9330  0.0000   0.0000 21.0983
 #> 
-#>    C.Cos X C.Cos Y C.Cos Z   Theta     Phi
-#> C1  0.9970  0.0688  0.0368  2.1119 86.0548
-#> C2  0.6409  0.2029  0.7404 49.1207 78.2961
-#> C3  0.5405  0.8411  0.0226  2.3974 32.7476
+#>     Cos X  Cos Y  Cos Z   Theta     Phi
+#> C1 0.9970 0.0687 0.0365  2.0975 86.0592
+#> C2 0.6411 0.2026 0.7402 49.1057 78.3087
+#> C3 0.5405 0.8410 0.0227  2.4073 32.7530
 #> 
 #>       DDISC1 DDISC2 DDISC3
-#> W7Q1  2.0304 1.2433 1.2326
-#> W7Q2  2.6038 1.4887 1.4088
-#> W7Q3  2.7847 1.7901 1.5096
-#> W7Q4  1.9169 1.3697 1.1905
-#> W7Q5  2.2308 1.3696 1.1862
-#> W7Q6  2.0181 1.4484 1.2868
-#> W7Q7  1.6438 1.3312 0.9754
-#> W7Q8  1.8004 1.4465 1.1582
-#> W7Q9  1.7364 1.2479 1.1422
-#> W7Q10 1.7679 1.0560 1.0604
-#> W7Q11 1.4900 1.7809 1.1867
+#> W7Q1  2.0305 1.2435 1.2326
+#> W7Q2  2.6040 1.4889 1.4089
+#> W7Q3  2.7838 1.7901 1.5093
+#> W7Q4  1.9171 1.3695 1.1906
+#> W7Q5  2.2306 1.3696 1.1861
+#> W7Q6  2.0182 1.4482 1.2869
+#> W7Q7  1.6439 1.3311 0.9755
+#> W7Q8  1.8004 1.4464 1.1582
+#> W7Q9  1.7364 1.2479 1.1423
+#> W7Q10 1.7679 1.0562 1.0604
+#> W7Q11 1.4896 1.7801 1.1865
 #> W7Q12 0.7951 1.1892 0.4668
-#> W7Q13 1.2053 2.0328 0.8922
-#> W7Q14 0.8113 1.2997 0.8308
+#> W7Q13 1.2064 2.0356 0.8930
+#> W7Q14 0.8113 1.2996 0.8309
 #> W7Q15 0.5019 0.3324 0.9043
-#> W7Q16 0.6568 0.6168 0.6894
-#> W7Q17 1.2799 1.0758 1.7722
-#> W7Q18 0.4975 0.4363 1.3578
-#> W7Q19 0.9605 1.0044 1.6547
-#> W7Q20 0.8644 0.8581 2.0011
+#> W7Q16 0.6568 0.6169 0.6894
+#> W7Q17 1.2799 1.0759 1.7721
+#> W7Q18 0.4975 0.4364 1.3578
+#> W7Q19 0.9606 1.0044 1.6547
+#> W7Q20 0.8645 0.8580 2.0012
 ```
 
 The `D3mirt()` function prints a short report containing the number of
@@ -514,7 +515,7 @@ summary(mod2)
 #> W7Q19 0.0000 1.6471 0.0000  4.5704 2.6646 1.6572  0.3352 -2.0165
 #> W7Q20 0.0000 1.9471 0.0000  4.5578 2.3173 1.2468 -0.3427 -2.8570
 #> 
-#>        MDISC  MDIFF1  MDIFF2  MDIFF3  MDIFF4 MDIFF5
+#>         DISC  MDIFF1  MDIFF2  MDIFF3  MDIFF4 MDIFF5
 #> W7Q1  2.0183 -3.9742 -3.4733 -2.9456 -1.5737 0.2420
 #> W7Q2  2.5545 -3.5442 -2.5214 -1.7178 -0.6333 0.9386
 #> W7Q3  2.7483 -3.7565 -2.7210 -2.0379 -0.9749 0.4304
@@ -535,31 +536,33 @@ summary(mod2)
 #> W7Q19 1.6471 -2.7749 -1.6178 -1.0062 -0.2035 1.2243
 #> W7Q20 1.9471 -2.3408 -1.1902 -0.6403  0.1760 1.4673
 #> 
-#>       D.Cos X D.Cos Y D.Cos Z Theta Phi
-#> W7Q1        1       0       0     0  90
-#> W7Q2        1       0       0     0  90
-#> W7Q3        1       0       0     0  90
-#> W7Q4        1       0       0     0  90
-#> W7Q5        1       0       0     0  90
-#> W7Q6        1       0       0     0  90
-#> W7Q7        1       0       0     0  90
-#> W7Q8        1       0       0     0  90
-#> W7Q9        1       0       0     0  90
-#> W7Q10       1       0       0     0  90
-#> W7Q11       0       0       1    90  90
-#> W7Q12       0       0       1    90  90
-#> W7Q13       0       0       1    90  90
-#> W7Q14       0       0       1    90  90
-#> W7Q15       0       1       0   NaN   0
-#> W7Q17       0       1       0   NaN   0
-#> W7Q18       0       1       0   NaN   0
-#> W7Q19       0       1       0   NaN   0
-#> W7Q20       0       1       0   NaN   0
+#>       Cos X Cos Y Cos Z Theta Phi
+#> W7Q1      1     0     0     0  90
+#> W7Q2      1     0     0     0  90
+#> W7Q3      1     0     0     0  90
+#> W7Q4      1     0     0     0  90
+#> W7Q5      1     0     0     0  90
+#> W7Q6      1     0     0     0  90
+#> W7Q7      1     0     0     0  90
+#> W7Q8      1     0     0     0  90
+#> W7Q9      1     0     0     0  90
+#> W7Q10     1     0     0     0  90
+#> W7Q11     0     0     1    90  90
+#> W7Q12     0     0     1    90  90
+#> W7Q13     0     0     1    90  90
+#> W7Q14     0     0     1    90  90
+#> W7Q15     0     1     0   NaN   0
+#> W7Q17     0     1     0   NaN   0
+#> W7Q18     0     1     0   NaN   0
+#> W7Q19     0     1     0   NaN   0
+#> W7Q20     0     1     0   NaN   0
 ```
 
-In the output, the simple loading structure can be seen. Aldo note that
-$\theta$ reports `NaN` when both $\theta$ and $\phi$ is zero. This is
-because when converting to spherical coordinates, items oriented
+In the output, the simple loading structure can be seen. Note that
+because the item loadings have been constrained, the $MDISC$ is replaced
+with the $DDISC$ since the discrimination is no longer optimized. Also
+note that $\theta$ reports `NaN` when both $\theta$ and $\phi$ is zero.
+This is because when converting to spherical coordinates, items oriented
 parallel to the $y$-axis will have $\cos (0)$ in the denominator of the
 $\arctan$ function, resulting in undefined values.
 
@@ -568,10 +571,10 @@ $\arctan$ function, resulting in undefined values.
 The `plot()` method for objects of class `D3mirt` is built on the `rgl`
 package (Adler & Murdoch, 2023) for visualization with OpenGL. Graphing
 in default mode by calling `plot()` will return an RGL device appearing
-in an external window as a three-dimensional interactive object
-containing vector arrows with the latent dimensions running along the
-orthogonal axes that can be rotated. In this illustration, however, all
-RGL devices are plotted inline as still shots displayed from two angles,
+in the console as a three-dimensional interactive object containing
+vector arrows with the latent dimensions running along the orthogonal
+axes that can be rotated. In this illustration, however, all RGL devices
+are plotted inline as still shots displayed from two angles,
 $15^{\circ}$ (clockwise; default plot angle) and $90^{\circ}$. To change
 the plot output to $90^{\circ}$, use the `view` argument in the `plot()`
 function and change the first indicator from $15$ to $90$.
@@ -742,11 +745,11 @@ $MDISC$ is not used for the arrow length, all item vector arrows are
 scaled to one unit length. This allows the user to graph the item vector
 arrows with `plot()` set to a uniform length. This can help reduce
 visual clutter in the graphical output. To view the item vector arrows
-without the $MDISC$, set `scale = TRUE`.
+without the $MDISC$, set `scale = FALSE`.
 
 ``` r
 # Plot RGL device with items in uniform length and constructs visible and named
-plot(mod3, scale = TRUE, 
+plot(mod3, scale = FALSE, 
         constructs = TRUE, 
         construct.lab = c("Compassion", "Fairness", "Conformity"))
 ```

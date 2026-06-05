@@ -34,27 +34,27 @@ summary.D3mirt <- function(object, ..., digits = 4){
   tab2 <- as.data.frame(object$diff)
   tab1 <- as.data.frame(cbind(tab1, tab2))
   tab3 <- as.data.frame(object$mdiff)
-  tab4 <- as.data.frame(object$mdisc)
+  tab4 <- as.data.frame(object$disc)
   tab4 <- as.data.frame(cbind(tab4, tab3))
-  tab5 <- as.data.frame(cbind(object$dir.cos, object$spherical))
+  tab5 <- as.data.frame(cbind(object$dir.cos, object$angles))
   if (length(object$diff) > 1){
     cat(paste("\nD3mirt:", nrow(tab1), "items and", ncol(tab2), "levels of difficulty\n\n"))
   } else {
     cat(paste("\nD3mirt:", nrow(tab1), "items and", ncol(tab2), "level of difficulty\n\n"))
   }
-    if (length(object$modid) == 2 ){
-      cat(paste("Compensatory model\n"))
-      cat(paste("Model identification items: ", paste(object$modid[1],", ", sep = ""), paste (object$modid[2], sep = "") , "\n\n", sep = ""))
+  if (length(object$modid) == 2 ){
+    cat(paste("Compensatory model\n"))
+    cat(paste("Model identification items: ", paste(object$modid[1],", ", sep = ""), paste (object$modid[2], sep = "") , "\n\n", sep = ""))
+  }
+  if (length(object$modid) > 2 ){
+    cat(paste("Orthogonal model\n"))
+    for (i in seq_along(object$modid)){
+      n <- unlist(object$modid[i])
+      z <- as.character(rownames(tab1[n, ]))
+      cat(paste("Item vector ", i, ": ", paste(z, collapse=", ", sep = ""), "\n", sep = ""))
     }
-    if (length(object$modid) > 2 ){
-      cat(paste("Orthogonal model\n"))
-      for (i in seq_along(object$modid)){
-        n <- unlist(object$modid[i])
-        z <- as.character(rownames(tab1[n, ]))
-        cat(paste("Item vector ", i, ": ", paste(z, collapse=", ", sep = ""), "\n", sep = ""))
-      }
-      cat(paste("\n"))
-      }
+    cat(paste("\n"))
+  }
   if (!is.null(object$c.dir.cos)){
     tab6 <- as.data.frame(cbind(object$c.dir.cos, object$c.spherical))
     tab7 <- as.data.frame(cbind(object$ddisc))
@@ -67,8 +67,8 @@ summary.D3mirt <- function(object, ..., digits = 4){
       }
       cat(paste("\n"))
     }
-  if (!is.null(object$con.sphe)){
-    cat(paste("Constructs\n"))
+    if (!is.null(object$con.sphe)){
+      cat(paste("Constructs\n"))
       for (i in seq_along(object$con.sphe)){
         n <- unlist(object$con.sphe[i])
         cat(paste("Spherical coordinate vector ", i, ": ", paste(n[1], ", ", collapse="", sep = ""), paste(n[2], collapse="", sep = ""), "\n", sep = ""))

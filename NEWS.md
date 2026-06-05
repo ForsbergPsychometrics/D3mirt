@@ -1,3 +1,10 @@
+# D3mirt 2.0.5
+- Rgl widget opens in R console as defualt
+- Changed scale argument to default TRUE for scaling vector length with MDISC.
+- Orthogonal model now reoprts DISC instead of MDISC
+- D and C removed from table when reporting direction cosines
+
+
 # D3mirt 2.0.4
 - New workflow integration which only requires the user to state what model identification items should be used by D3mirt() (no external model syntax required).
 - A new optional model, referred to as the orthogonal model, is included in D3mirt() which allows investigating a three-dimensional scale under the assumption that no within-multidimensionality exists.

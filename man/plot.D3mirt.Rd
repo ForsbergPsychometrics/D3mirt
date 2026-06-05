@@ -6,7 +6,8 @@
 \usage{
 \method{plot}{D3mirt}(
   x,
-  scale = FALSE,
+  console = TRUE,
+  scale = TRUE,
   hide = FALSE,
   ind.scores = FALSE,
   diff.level = NULL,
@@ -16,6 +17,8 @@
   constructs = FALSE,
   construct.lab = NULL,
   adjust.lab = c(0.5, -0.8),
+  dist = 0,
+  c.dist = 0,
   x.lab = "X",
   y.lab = "Y",
   z.lab = "Z",
@@ -62,7 +65,9 @@
 \arguments{
 \item{x}{A S3 object of class \code{D3mirt}.}
 
-\item{scale}{Logical, if item vector arrow length should visualize the MDISC. If set to FALSE, the vector arrow length will be of one unit length. The default is \code{scale = FALSE}.}
+\item{console}{Logical, if RGL object should be printed to console (TRUE) or to external pop-up window. The default is \code{console = TRUE}.}
+
+\item{scale}{Logical, if item vector arrow length should visualize the MDISC. If set to FALSE, the vector arrow length will be of one unit length. The default is \code{scale = TRUE}.}
 
 \item{hide}{Logical, if items should be plotted. The default is \code{hide = FALSE}.}
 
@@ -86,6 +91,10 @@ In this case, item label 1 will be printed on item 24, item label 2 on item 34, 
 
 \item{adjust.lab}{Vector of parameters for the position of the item and construct labels for the \code{text3d} function.
 The first value is for horizontal adjustment, and the second is for vertical adjustment. The default is \code{adjust.lab = c(0.5, -0.8)}.}
+
+\item{dist}{Distance (+/-) of item vector label from item vector. The default is \code{dist = 0}.}
+
+\item{c.dist}{Distance (+/-) of construct vector label from construct vector. The default is \code{c.dist = 0}.}
 
 \item{x.lab}{Labels for x-axis, the default is \code{x.lab = "X"}.}
 
@@ -180,13 +189,13 @@ The first numeric adjusts the length in the positive direction, and the second n
 A RGL graphical device.
 }
 \description{
-For graphing of objects of class \code{D3mirt} from the \code{\link[=D3mirt]{D3mirt()}} function using the rgl 3D visualization device system (Adler & Murdoch, 2022).
+For graphing of objects of class \code{D3mirt} from the \code{\link[=D3mirt]{D3mirt()}} function using the RGL 3D visualization device system (Adler & Murdoch, 2022).
 }
 \details{
 The plotting function allows plotting of all items, a selection of items as well as plotting a single item.
-Length of the vector arrows can be set to one unit length across all item vector arrows by setting \code{scale = TRUE}.
+Length of the vector arrows can be set to one unit length across all item vector arrows by setting \code{scale = FALSE}.
 This removes the visualization of the MDISC parameter.
-Note that when scaling items with \code{scale = TRUE}, the \code{plot()} function does not change the length of the model axes.
+Note that when items are not scaled, the \code{plot()} function does not change the length of the model axes.
 This often means that the axes of the model may need to be adjusted, which can be achieved proportionally with \code{axis.scalar} or manually with \code{axis.length}.
 
 The user has the option of adding constructs to the graphical output with \code{constructs = TRUE} (see the documentation for \link{D3mirt} or the package vignette regarding constructs).
@@ -228,7 +237,7 @@ con <- list(c(1,2,3,4,5,6,7,8,9,10),
             c(15,17,18,19,20))
 mod <- D3mirt(x, modid = c("W7Q3", "W7Q20"), con.items = con)
 
-# Plot RGL device with constructs invisible
+# Plot RGL device without constructs
 plot(mod)
 
 # Plot RGL device with constructs visible and named
@@ -248,7 +257,7 @@ plot(mod, constructs = TRUE,
 # Plot RGL device on item difficulty level 5
 plot(mod, diff.level = 5)
 
-# Plot RGL device with scaled items and constructs visible and named
+# Plot RGL device with item vectors at unit length and constructs visible and named
 plot(mod, scale = TRUE,
      constructs = TRUE,
      construct.lab = c("Compassion", "Fairness", "Conformity"))

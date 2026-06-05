@@ -1,3 +1,19 @@
+── R CMD check results D3mirt 2.0.5 ────
+Duration: 8m 31.1s
+
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+
+## Notes on Test Results
+* The warning "Warning: 'rgl.init' failed, will use the null device" may appear on headless macOS check flavors. This is an expected upstream behavior of the 'rgl' package when no X11/XQuartz display is available. The package safely falls back to the null device and functions as intended.
+
+## Comments to CRAN
+- Rgl widget opens in R console as defualt
+- Changed scale argument to default TRUE for scaling vector length with MDISC.
+- Orthogonal model now reoprts DISC instead of MDISC
+- D and C removed from table when reporting direction cosines
+
+
+
 ── R CMD check results D3mirt 2.0.3 ────
 Duration: 24m 36.3s
 

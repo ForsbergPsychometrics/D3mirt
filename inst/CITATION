@@ -1,8 +1,8 @@
 bibentry(
   bibtype = "Manual",
-  title = "D3mirt: Descriptive 3D Multidimensional Item Response Theory Modelling",
+  title = "D3mirt: Descriptive 3D Multidimensional Item Response Theory Modeling",
   author =  person( "Erik", "Forsberg", role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-5228-9729")),
   year = "2024",
-  note = "R package version 2.0.4",
+  note = "R package version 2.0.5",
   url = "https://CRAN.R-project.org/package=D3mirt"
 )
