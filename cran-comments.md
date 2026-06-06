@@ -1,5 +1,5 @@
-── R CMD check results D3mirt 2.0.5 ────
-Duration: 8m 31.1s
+── R CMD check results ───────────────── D3mirt 2.0.4 ────
+Duration: 8m 30s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
@@ -12,6 +12,7 @@ Duration: 8m 31.1s
 - Orthogonal model now reoprts DISC instead of MDISC
 - D and C removed from table when reporting direction cosines
 - rgl was moved to imports since its only used for plotting results
+- Vectorized code for label plotting
 
 
 

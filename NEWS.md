@@ -3,6 +3,7 @@
 - Changed scale argument to default TRUE for scaling vector length with MDISC.
 - Orthogonal model now reoprts DISC instead of MDISC
 - D and C removed from table when reporting direction cosines
+- Vectorized code for label plotting
 
 
 # D3mirt 2.0.4

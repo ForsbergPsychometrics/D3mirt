@@ -25,7 +25,7 @@
   title = "",
   line = -5,
   font = 1,
-  cex = 1,
+  cex = 0.8,
   font.col = "black",
   axis.scalar = 1.1,
   axis.length = NULL,
@@ -108,7 +108,7 @@ The first value is for horizontal adjustment, and the second is for vertical adj
 
 \item{font}{A numeric font number from 1 to 5, the default is \code{font = 1}. See \link[rgl:texts]{rgl::text3d} for more on font options.}
 
-\item{cex}{A numeric character expansion value to adjust font size, the default is \code{cex = 1}.}
+\item{cex}{A numeric character expansion value to adjust font size, the default is \code{cex = 0.8}.}
 
 \item{font.col}{Color of axes, numbers, and fonts. The default is \code{font.col = "black"}.}
 
@@ -307,15 +307,18 @@ plot(mod, hide = TRUE,
     ellipse.col = "orange")
 }
 \dontrun{
+# Plot as interactive RGL device in external window
+plot(mod, console = FALSE)
+
 # Export an open RGL device to the console to be saved as HTML or image file
-plot(mod, constructs = TRUE)
+plot(mod)
 s <- rgl::scene3d()
 rgl::rglwidget(s,
                width = 1040,
                height = 1040)
 
 # Export a snapshoot of an open RGL device directly to file
-plot(mod, constructs = TRUE)
+plot(mod)
 rgl::rgl.snapshot('RGLdevice.png',
                     fmt = 'png')
 }

@@ -26,7 +26,7 @@
 #' @param title The main title for the graphical device, plotted with the `title3d()` function. The default is no title.
 #' @param line  Title placement for `title3d()`. The default is `line = -5`.
 #' @param font A numeric font number from 1 to 5, the default is `font = 1`. See [rgl::text3d] for more on font options.
-#' @param cex A numeric character expansion value to adjust font size, the default is `cex = 1`.
+#' @param cex A numeric character expansion value to adjust font size, the default is `cex = 0.8`.
 #' @param font.col Color of axes, numbers, and fonts. The default is `font.col = "black"`.
 #' @param axis.scalar Scalar multiple for adjusting the length of all axes (x, y, z) in the 3D model proportionally. The default is `axis.scalar = 1.1`.
 #' @param axis.length Optional. For adjusting the length of the axis manually by entering a numeric or a numeric vector.
@@ -200,22 +200,25 @@
 #'     ellipse.col = "orange")
 #'}
 #' \dontrun{
+#' # Plot as interactive RGL device in external window
+#' plot(mod, console = FALSE)
+#'
 #' # Export an open RGL device to the console to be saved as HTML or image file
-#' plot(mod, constructs = TRUE)
+#' plot(mod)
 #' s <- rgl::scene3d()
 #' rgl::rglwidget(s,
 #'                width = 1040,
 #'                height = 1040)
 #'
 #' # Export a snapshoot of an open RGL device directly to file
-#' plot(mod, constructs = TRUE)
+#' plot(mod)
 #' rgl::rgl.snapshot('RGLdevice.png',
 #'                     fmt = 'png')
 #' }
 #' @export
 plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scores = FALSE, diff.level = NULL, items = NULL, item.names = TRUE,  item.lab = NULL,
                          constructs = FALSE, construct.lab = NULL, adjust.lab = c(0.5, -0.8), dist = 0, c.dist = 0,
-                         x.lab = "X", y.lab="Y", z.lab="Z", title="", line = -5, font = 1, cex = 1, font.col = "black",
+                         x.lab = "X", y.lab="Y", z.lab="Z", title="", line = -5, font = 1, cex = 0.8, font.col = "black",
                          axis.scalar = 1.1, axis.length = NULL, axis.points = "black",
                          axis.ticks = TRUE, nticks = 4,  width.rgl.x = 1040, width.rgl.y= 1040, view = c(15, 20, 0.6),
                          show.plane = TRUE, plane.col = "grey80", background = "white",
@@ -286,7 +289,7 @@ plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scor
   axes <- rbind(c(xaxis[2], 0, 0), c(0, yaxis[2], 0),
                   c(0, 0, zaxis[2]))
   rgl::points3d(axes, color = axis.points, cex = cex)
-  rgl::text3d(axes, text = c(x.lab, y.lab, z.lab), color = font.col,
+  rgl::text3d(axes, texts = c(x.lab, y.lab, z.lab), color = font.col,
               adj = c(0.5, -0.8), font = font, cex = cex)
   rgl::title3d(main= title,line= line, cex = cex, font = font, color = font.col)
   if (show.plane == TRUE) {
@@ -360,15 +363,25 @@ plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scor
         if (is.null(diff.level)){
           if (is.null(item.lab)){
             inames <- rownames(x$loadings)
+            if (is.null(inames)) {
+              inames <- paste0("Item ", seq_len(nrow(x$loadings)))
+            }
             if (is.null(ncol(vec))){
               max <-  vec[[ncol(x$mdiff)]]
             } else {
               max <-  vec
             }
-            vapply(seq(nrow(x$mdisc)), function(i){
-              rgl::text3d(max[(i*2),1] + dist, max[(i*2),2] + dist, max[(i*2),3] + dist, text = c(inames[i]), color = font.col,
-                          adj = adjust.lab, font = font, cex = cex)
-            }, integer(1))
+            head_rows <- seq(2, nrow(x$loadings) * 2, by = 2)
+            rgl::text3d(
+              x = max[head_rows, 1] + dist,
+              y = max[head_rows, 2] + dist,
+              z = max[head_rows, 3] + dist,
+              texts = inames,
+              color = font.col,
+              adj = adjust.lab,
+              font = font,
+              cex = cex
+            )
           } else {
             if(!length(item.lab) <= nrow(x$loadings)) warning("There are more item labels than items")
             if(length(item.lab) < nrow(x$loadings)) warning("There are too few item labels")
@@ -377,30 +390,57 @@ plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scor
             } else {
               max <-  vec
             }
-            vapply(seq(nrow(x$mdisc)), function(i){
-              rgl::text3d(max[(i*2),1] + dist, max[(i*2),2] + dist, max[(i*2),3] + dist, text = c(item.lab[i]), color = font.col,
-                          adj = adjust.lab, font = font, cex = cex)
-            }, integer(1))
+            head_rows <- seq(2, nrow(x$loadings) * 2, by = 2)
+            rgl::text3d(
+              x = max[head_rows, 1] + dist,
+              y = max[head_rows, 2] + dist,
+              z = max[head_rows, 3] + dist,
+              texts = item.lab,
+              color = font.col,
+              adj = adjust.lab,
+              font = font,
+              cex = cex
+            )
           }
         } else {
           if (is.null(item.lab)){
             inames <- rownames(x$loadings)
+            if (is.null(inames)) {
+              inames <- paste0("Item ", seq_len(nrow(x$loadings)))
+            }
             dl <-  vec[[diff.level]]
-            vapply(seq(nrow(x$mdisc)), function(i){
-              rgl::text3d(dl[(i*2),1] + dist, dl[(i*2),2] + dist, dl[(i*2),3] + dist,, text = c(inames[i]), color = font.col,
-                          adj = adjust.lab, font = font, cex = cex)
-            }, integer(1))
+            head_rows <- seq(2, nrow(x$loadings) * 2, by = 2)
+            rgl::text3d(
+              x = dl[head_rows, 1] + dist,
+              y = dl[head_rows, 2] + dist,
+              z = dl[head_rows, 3] + dist,
+              texts = inames,
+              color = font.col,
+              adj = adjust.lab,
+              font = font,
+              cex = cex
+            )
+
           } else {
             if(!length(item.lab) <= nrow(x$loadings)) warning("There are more item labels than items")
             if(length(item.lab) < nrow(x$loadings)) warning("There are too few item labels")
             max <-  vec[[diff.level]]
-            vapply(seq(nrow(x$mdisc)), function(i){
-              rgl::text3d(max[(i*2),1] + dist, max[(i*2),2] + dist, max[(i*2),3] + dist, text = c(item.lab[i]), color = font.col,
-                          adj = adjust.lab, font = font, cex = cex)
-            }, integer(1))
+            head_rows <- seq(2, nrow(x$loadings) * 2, by = 2)
+            rgl::text3d(
+              x = max[head_rows, 1] + dist,
+              y = max[head_rows, 2] + dist,
+              z = max[head_rows, 3] + dist,
+              texts = item.lab,
+              color = font.col,
+              adj = adjust.lab,
+              font = font,
+              cex = cex
+            )
+
           }
         }
       }
+  }
       if (item.names == TRUE && !is.null(items)){
         if(any(!items <= nrow(x$loadings))) stop("The items list contains one or more item indicators higher than the total number of items")
         if (is.null(diff.level)){
@@ -411,11 +451,18 @@ plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scor
             } else {
               max <-  vec
             }
-            vapply(seq_along(items), function(i){
-              m <- items[i]
-              rgl::text3d(max[m*2,1] + dist, max[m*2,2] + dist, max[m*2,3] + dist, text = c(inames[m]), color = font.col,
-                          adj = adjust.lab, font = font, cex = cex)
-            }, integer(1))
+            m <- items
+            rgl::text3d(
+              x = max[m * 2, 1] + dist,
+              y = max[m * 2, 2] + dist,
+              z = max[m * 2, 3] + dist,
+              texts = inames[m],
+              color = font.col,
+              adj = adjust.lab,
+              font = font,
+              cex = cex
+            )
+
           } else {
             if(!length(item.lab) <= length(items)) warning("There are more item labels than items in the items list")
             if(length(item.lab) < length(items)) warning("There are too few item labels")
@@ -424,19 +471,28 @@ plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scor
             } else {
               max <-  vec
             }
-            vapply(seq_along(items), function(i){
-              m <- items[i]
-              rgl::text3d(max[m*2,1] + dist, max[m*2,2] + dist, max[m*2,3] + dist, text = c(item.lab[i]), color = font.col,
-                          adj = adjust.lab, font = font, cex = cex)
-            }, integer(1))
+            m <- items
+            rgl::text3d(
+              x = max[m * 2, 1] + dist,
+              y = max[m * 2, 2] + dist,
+              z = max[m * 2, 3] + dist,
+              texts = item.lab[m],
+              color = font.col,
+              adj = adjust.lab,
+              font = font,
+              cex = cex
+            )
           }
         } else {
           if (is.null(item.lab)){
             dl <-  vec[[diff.level]]
             inames <- rownames(x$loadings)
+            if (is.null(inames)) {
+              inames <- paste0("Item ", seq_len(nrow(x$loadings)))
+            }
             vapply(seq_along(items), function(i){
               m <- items[i]
-              rgl::text3d(dl[m*2,1] + dist, dl[m*2,2] + dist, dl[m*2,3] + dist, text = c(inames[m]), color = font.col,
+              rgl::text3d(dl[m*2,1] + dist, dl[m*2,2] + dist, dl[m*2,3] + dist, texts = c(inames[m]), color = font.col,
                           adj = adjust.lab, font = font, cex = cex)
             }, integer(1))
           } else {
@@ -445,13 +501,12 @@ plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scor
             dl <-  as.data.frame(vec[diff.level, drop = FALSE])
             vapply(seq_along(items), function(i){
               m <- items[i]
-              rgl::text3d(dl[m*2,1] + dist, dl[m*2,2] + dist, dl[m*2,3] + dist, text = c(item.lab[i]), color = font.col,
+              rgl::text3d(dl[m*2,1] + dist, dl[m*2,2] + dist, dl[m*2,3] + dist, texts = c(item.lab[i]), color = font.col,
                           adj = adjust.lab, font = font, cex = cex)
             }, integer(1))
           }
         }
-      }
-      }
+  }
   if (constructs == TRUE){
     if (is.null(x$c.vec)) stop("The D3mirt object does not contain any constructs")
     cvec <- x$c.vec
@@ -462,7 +517,7 @@ plot.D3mirt <- function (x, console = TRUE, scale = TRUE, hide = FALSE, ind.scor
       if(!length(construct.lab) <= nrow(x$c.vec)) warning("There are more construct labels than constructs")
       clab <-  x$c.vec*c.scalars[1]
       vapply(seq(nrow(x$c.dir.cos)), function(i){
-        rgl::text3d(clab[(i*2),1] + c.dist, clab[(i*2),2] + c.dist, clab[(i*2),3] + c.dist, text = c(construct.lab[i]), color = font.col,
+        rgl::text3d(clab[(i*2),1] + c.dist, clab[(i*2),2] + c.dist, clab[(i*2),3] + c.dist, texts = c(construct.lab[i]), color = font.col,
                     adj = adjust.lab, font = font, cex = cex)
       }, integer(1))
     }
