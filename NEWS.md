@@ -1,3 +1,5 @@
+# D3mirt (development version)
+
 # D3mirt 2.0.5
 - Rgl widget opens in R console as defualt
 - Changed scale argument to default TRUE for scaling vector length with MDISC.
