@@ -64,7 +64,7 @@ install.packages('D3mirt')
 # Install the development version from GitHub
 # install.packages("devtools")
 # To include package vignette in the installation, add: build_vignettes = TRUE
-devtools::install_github("ForsbergPyschometrics/D3mirt")
+devtools::install_github("ForsbergPsychometrics/D3mirt")
 ```
 
 In what follows, the `D3mirt` procedure, including the main functions and some of the more essential arguments, will be briefly described using the built-in data set "anes0809offwaves". The data set ($N = 1046, M_{age} = 51.33, SD = 14.56, 57\%$ Female) is a subset from the American National Election Survey (ANES) from the 2008-2009 Panel Study Off Wave Questionnaires, December 2009 (DeBell, et al, 2010; <https://electionstudies.org/data-center/2008-2009-panel-study/>). All items measure moral preferences and are positively scored of Likert type, ranging from 1 = *Strongly Disagree* to 6 = *Strongly Agree*. Demographic variables include age and gender (male/female).

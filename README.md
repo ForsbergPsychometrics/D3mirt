@@ -118,7 +118,7 @@ install.packages('D3mirt')
 # Install the development version from GitHub
 # install.packages("devtools")
 # To include package vignette in the installation, add: build_vignettes = TRUE
-devtools::install_github("ForsbergPyschometrics/D3mirt")
+devtools::install_github("ForsbergPsychometrics/D3mirt")
 ```
 
 In what follows, the `D3mirt` procedure, including the main functions
