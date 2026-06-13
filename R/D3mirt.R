@@ -114,7 +114,7 @@
 #' summary(mod)
 #' }
 #' @export
-D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = NULL, itemtype = "graded", method.mirt = "QMCEM", method.fscores = "EAP", QMC = TRUE){
+D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = NULL, itemtype = "graded", method.mirt = "QMCEM", method.fscores = "EAP", QMC = TRUE, ...){
   if (!(itemtype == "graded" || itemtype == "2PL")) stop("The item model must be GRM or 2PL")
   if (!is.null(con.items) && !is.null(con.sphe)) stop("Use either items or spherical coordinates for constructs, not both")
   if (isS4(x)){
