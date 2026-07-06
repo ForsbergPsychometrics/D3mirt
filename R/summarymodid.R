@@ -2,8 +2,8 @@
 #'
 #' @description The summary method for the [D3mirt::modid()] function.
 #' @param object A S3 object of class `modid`.
-#' @param ... Additional arguments.
 #' @param digits The number of digits shown per estimate. The default is `digits = 4`.
+#' @param ... Additional arguments.
 #'
 #' @return Model identification items (one less than the number of factors), factor loadings and absolute sum score for model identification items, squared factor loadings, and factor loadings for all items.
 #' @author Erik Forsberg

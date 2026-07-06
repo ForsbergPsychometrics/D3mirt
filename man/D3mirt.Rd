@@ -10,16 +10,18 @@ D3mirt(
   model = NULL,
   con.items = NULL,
   con.sphe = NULL,
+  cap = 1e-04,
   itemtype = "graded",
   method.mirt = "QMCEM",
   method.fscores = "EAP",
-  QMC = TRUE
+  QMC = TRUE,
+  ...
 )
 }
 \arguments{
 \item{x}{A data frame with items in rows and model parameters in columns containing raw response data as integer values or factor loadings.
 Input can also be an S4 object of class 'SingleGroupClass' exported from \link[mirt:mirt]{mirt::mirt} (Chalmers, 2012).
-Regarding the data frame, the number of columns must be more than or equal to 4, i.e., three columns with (\emph{a}) parameters and at least one column for difficulty (\emph{d}) parameters.}
+The data frame with factor loading should have three columns with loading parameters and at least one column for difficulty parameters.}
 
 \item{modid}{Use either the two model identification items from \link{modid} as a combined vector or use nested list of item indicators to fit an orthogonal model (see examples below).
 The default is \code{modid = NULL}.}
@@ -31,6 +33,8 @@ The default is \code{model = NULL}.}
 
 \item{con.sphe}{Optional. Nested lists of spherical angles to identify constructs. The default is \code{con.sphe = NULL}.}
 
+\item{cap}{Lower bound for standard error to avoid dividing by infinity. The default is \code{cap = 0.0001}.}
+
 \item{itemtype}{What item type to use in the function call. Available options are \code{"2PL"} and \code{"graded"}. The default is \code{itemtype = "graded"}.}
 
 \item{method.mirt}{Estimation algorithm for \link[mirt:mirt]{mirt::mirt} (Chalmers, 2012) to fit the model. The default is \code{method.mirt = "QMCEM"}.}
@@ -38,6 +42,8 @@ The default is \code{model = NULL}.}
 \item{method.fscores}{Factor estimation algorithm for \link[mirt:fscores]{mirt::fscores} (Chalmers, 2012) for extracting respondent trait scores. The default is \code{method.fscores = "EAP"}.}
 
 \item{QMC}{Integration method for \link[mirt:fscores]{mirt::fscores} (Chalmers, 2012). The default is \code{QMC = TRUE}.}
+
+\item{...}{Any additional arguments passed to mirt().}
 }
 \value{
 A S3 object of class \code{D3mirt} with lists of \emph{a} and \emph{d} parameters from the M2PL or MGRM estimation, multidimensional difficulty (MDIFF), multidimensional discrimination (MDISC), direction cosines and degrees for vector angles, construct lists, vector coordinates, and respondent trait scores.

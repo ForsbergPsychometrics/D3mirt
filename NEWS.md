@@ -1,4 +1,15 @@
-# D3mirt (development version)
+# D3mirt 2.1.0
+- D2mirt function and plot method implented for 2D modeling
+- Information function introduced for information and standard error analysis
+- Test units expanded to cover new functions
+- Vignette and Readme updated to cover new functions and methods
+- Test data set includes angles3D for D3mirt() function and angles2D for D3mirt() function
+- Color option for construct vectors implemented in plot methods
+- Minor updates include: 
+- Dots in D3mirt and D2mirt for additional arguments
+- Argument ind.scores changed to scores
+- Argument construct.lab is abbreviated to c.lab
+
 
 # D3mirt 2.0.5
 - Rgl widget opens in R console as defualt

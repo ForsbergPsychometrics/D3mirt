@@ -1,3 +1,23 @@
+── R CMD check results ─────────────── D3mirt 2.0.5.9000 ────
+Duration: 13m 34.5s
+
+## Comments to CRAN
+- Rgl widget opens in R console as defualt
+- D2mirt function and plot method implented for 2D modeling
+- Information function introduced for information and standard error analysis
+- Test units expanded to cover new functions
+- Vignette and Readme updated to cover new functions and methods
+- Test data set includes angles3D for D3mirt() function and angles2D for D3mirt() function
+- Color option for construct vectors implemented in plot methods
+- Minor updates include: 
+- Dots in D3mirt and D2mirt for additional arguments
+- Argument ind.scores changed to scores
+- Argument construct.lab is abbreviated to c.lab
+
+## Notes on Test Results
+* The warning "Warning: 'rgl.init' failed, will use the null device" may appear on headless macOS check flavors. This is an expected upstream behavior of the 'rgl' package when no X11/XQuartz display is available. The package safely falls back to the null device and functions as intended.
+
+
 ── R CMD check results ───────────────── D3mirt 2.0.4 ────
 Duration: 8m 30s
 

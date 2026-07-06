@@ -1,7 +1,7 @@
-#' Summary Method for S3 Objects of Class `D3mirt`
+#' Summary Method for S3 Objects of Class `D2mirt`
 #'
-#' @description The summary method for the [D3mirt::D3mirt()] function.
-#' @param object A S3 object of class `D3mirt`.
+#' @description The summary method for the [D3mirt::D2mirt()] function.
+#' @param object A S3 object of class `D2mirt`.
 #' @param digits The number of digits shown per estimate. The default is `digits = 4`.
 #' @param ... Additional arguments.
 #'
@@ -16,11 +16,8 @@
 #' x <- anes0809offwaves
 #' x <- x[, 3:22] # Remove columns for age and gender
 #'
-#' # Call D3mirt() with constructs
-#' con <- list(c(1,2,3,4,5,6,7,8,9,10),
-#'             c(11,12,13,14),
-#'             c(15,17,18,19,20))
-#' mod <- D3mirt(x, modid = c("W7Q3", "W7Q20"), con.items = con)
+#' # Call D2mirt()
+#' mod <- D2mirt(x, modid = "W7Q10")
 #'
 #' # Call to summary
 #' summary(mod)
@@ -29,24 +26,25 @@
 #' summary(mod, digits = 2)
 #' }
 #' @export
-summary.D3mirt <- function(object, digits = 4, ...){
+summary.D2mirt <- function(object, digits = 4, ...){
   tab1 <- as.data.frame(object$loadings)
   tab2 <- as.data.frame(object$diff)
   tab1 <- as.data.frame(cbind(tab1, tab2))
   tab3 <- as.data.frame(object$mdiff)
   tab4 <- as.data.frame(object$disc)
   tab4 <- as.data.frame(cbind(tab4, tab3))
-  tab5 <- as.data.frame(cbind(object$dir.cos, object$angles))
+  tab5 <- as.data.frame(object$dir.cos)
+  tab5 <- as.data.frame(cbind(tab5[, 1:2], object$angles))
   if (length(object$diff) > 1){
-    cat(paste("\nD3mirt:", nrow(tab1), "items and", ncol(tab2), "levels of difficulty\n\n"))
+    cat(paste("\nD2mirt:", nrow(tab1), "items and", ncol(tab2), "levels of difficulty\n\n"))
   } else {
-    cat(paste("\nD3mirt:", nrow(tab1), "items and", ncol(tab2), "level of difficulty\n\n"))
+    cat(paste("\nD2mirt:", nrow(tab1), "items and", ncol(tab2), "level of difficulty\n\n"))
   }
-  if (length(object$modid) == 2 ){
+  if (length(object$modid) == 1 ){
     cat(paste("Compensatory model\n"))
-    cat(paste("Model identification items: ", paste(object$modid[1],", ", sep = ""), paste (object$modid[2], sep = "") , "\n\n", sep = ""))
+    cat(paste("Model identification item: ", paste(object$modid[1], sep = ""), "\n\n", sep = ""))
   }
-  if (length(object$modid) > 2 ){
+  if (length(object$modid) > 1 ){
     cat(paste("Orthogonal model\n"))
     for (i in seq_along(object$modid)){
       n <- unlist(object$modid[[i]])
@@ -56,7 +54,8 @@ summary.D3mirt <- function(object, digits = 4, ...){
     cat(paste("\n"))
   }
   if (!is.null(object$c.dir.cos)){
-    tab6 <- as.data.frame(cbind(object$c.dir.cos, object$c.spherical))
+    cdcos <- object$c.dir.cos
+    tab6 <- as.data.frame(cbind(cdcos[, 1:2], object$c.pol))
     tab7 <- as.data.frame(cbind(object$ddisc))
     if (!is.null(object$con.items)){
       cat(paste("Constructs\n"))
@@ -67,11 +66,11 @@ summary.D3mirt <- function(object, digits = 4, ...){
       }
       cat(paste("\n"))
     }
-    if (!is.null(object$con.sphe)){
+    if (!is.null(object$con.pol)){
       cat(paste("Constructs\n"))
-      for (i in seq_along(object$con.sphe)){
-        n <- unlist(object$con.sphe[[i]])
-        cat(paste("Spherical coordinate vector ", i, ": ", paste(n[1], ", ", collapse="", sep = ""), paste(n[2], collapse="", sep = ""), "\n", sep = ""))
+      for (i in seq_along(object$con.pol)){
+        n <- unlist(object$con.pol[[i]])
+        cat(paste0("Polar coordinate vector ", i, ": ", round(n, 4), "\n"))
       }
     }
     cat(paste("\n"))

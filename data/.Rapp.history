@@ -1,1 +1,2 @@
 load("/Users/roadcastermusic/R Projects/D3mirt/data/anes0809offwaves.rda")
+load("/Users/roadcastermusic/R Projects/D3mirt/data/angles.rda")

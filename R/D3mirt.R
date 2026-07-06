@@ -4,17 +4,19 @@
 #'
 #' @param x A data frame with items in rows and model parameters in columns containing raw response data as integer values or factor loadings.
 #' Input can also be an S4 object of class 'SingleGroupClass' exported from [mirt::mirt] (Chalmers, 2012).
-#' Regarding the data frame, the number of columns must be more than or equal to 4, i.e., three columns with (\emph{a}) parameters and at least one column for difficulty (\emph{d}) parameters.
+#' The data frame with factor loading should have three columns with loading parameters and at least one column for difficulty parameters.
 #' @param modid Use either the two model identification items from [D3mirt::modid] as a combined vector or use nested list of item indicators to fit an orthogonal model (see examples below).
 #' The default is `modid = NULL`.
 #' @param model The user has the option of imputing a model specification schema used in the call to [mirt::mirt] (Chalmers, 2012).
 #' The default is `model = NULL`.
 #' @param con.items Optional. Nested lists with integer values as item indicators to identify constructs. The default is `con.items = NULL`.
+#' @param cap Lower bound for standard error to avoid dividing by infinity. The default is `cap = 0.0001`.
 #' @param con.sphe Optional. Nested lists of spherical angles to identify constructs. The default is `con.sphe = NULL`.
 #' @param itemtype What item type to use in the function call. Available options are `"2PL"` and `"graded"`. The default is `itemtype = "graded"`.
 #' @param method.mirt Estimation algorithm for [mirt::mirt] (Chalmers, 2012) to fit the model. The default is `method.mirt = "QMCEM"`.
 #' @param method.fscores Factor estimation algorithm for [mirt::fscores] (Chalmers, 2012) for extracting respondent trait scores. The default is `method.fscores = "EAP"`.
 #' @param QMC Integration method for [mirt::fscores] (Chalmers, 2012). The default is `QMC = TRUE`.
+#' @param ... Any additional arguments passed to mirt().
 #'
 #' @importFrom mirt mirt
 #' @importFrom mirt fscores
@@ -114,7 +116,7 @@
 #' summary(mod)
 #' }
 #' @export
-D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = NULL, itemtype = "graded", method.mirt = "QMCEM", method.fscores = "EAP", QMC = TRUE, ...){
+D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = NULL, cap = 0.0001, itemtype = "graded", method.mirt = "QMCEM", method.fscores = "EAP", QMC = TRUE, ...){
   if (!(itemtype == "graded" || itemtype == "2PL")) stop("The item model must be GRM or 2PL")
   if (!is.null(con.items) && !is.null(con.sphe)) stop("Use either items or spherical coordinates for constructs, not both")
   if (isS4(x)){
@@ -131,8 +133,8 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
       if (length(modid) < 2) stop("The model identification argument contains too few elements")
       mod <- NULL
       mod <- c(paste("F1 = 1 -", ncol(x), "\n",
-                     paste("F2 = 1 -", ncol(x), "\n"),
-                     paste("F3 = 1 -", ncol(x), "\n")))
+               paste("F2 = 1 -", ncol(x), "\n"),
+               paste("F3 = 1 -", ncol(x), "\n")))
       if (length(modid) == 2) {
         t <- c(paste("START=(", modid[1], ", a2, 0)", "\n"),
                paste("START=(", modid[1], ", a3, 0)", "\n"),
@@ -171,10 +173,10 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
     if (is.null(model)) stop("The model must be identified, use model identification items or constrain all items to parallell with the axes")
     if (length(unique(x[, 1])) > 2 && itemtype == "2PL") stop("Use the GRM as item model if the items have more than two response options")
     if (length(unique(x[, 1])) == 2 && itemtype == "graded") warning("Use the 2PL as item model if the items have two response options")
-    x <- mirt::mirt(x, model = model, itemtype = itemtype, SE = TRUE, method = method.mirt)
+    x <- mirt::mirt(x, model = model, itemtype = itemtype, SE = FALSE, method = method.mirt)
     trait <- mirt::fscores(x, method = method.fscores, full.scores = TRUE, full.scores.SE = FALSE, QMC = QMC)
     k <- x@Data$K[1]-1
-    x <- data.frame(mirt::coef(x, simplify=TRUE)$"items"[,1:(3+k)])
+    x <- data.frame(mirt::coef(x, simplify=TRUE)$"items"[, 1:(3+k)])
     x <- as.matrix(x)
   }
   if (ncol(x) < 4) stop("The data frame must have at least 4 columns")
@@ -182,6 +184,9 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
   ndiff <- ncol(x)-3
   diff <- x[, (4):(3+ndiff), drop = FALSE]
   mdisc <- sqrt(rowSums(a^2))
+  info <- 0.25 * (mdisc^2)
+  infocap <- pmax(info, cap)
+  infose <- 1/sqrt(infocap)
   md <- mdisc%*%matrix(rep(1,3), nrow=1, ncol=3)
   dcos <- as.matrix(a/md, ncol = 3)
   theta <- NULL
@@ -226,8 +231,8 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
     for (i in seq_along(con.items)){
       l <- unlist(con.items[i])
       cosk <- NULL
-      for (i in seq_along(l)){
-        n <- l[i]
+      for (j in seq_along(l)){
+        n <- l[j]
         m <- dcos[n,]
         cosk <- as.matrix(rbind(cosk,m), ncol = 3)
       }
@@ -238,17 +243,17 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
       con <- as.matrix(rbind(con,rbind(minnorm, maxnorm)), ncol = 3)
       ncos <- as.matrix(rbind(ncos,cdcos), ncol = 3)
       theta <- NULL
-      for (i in seq(nrow(cdcos))){
-        c <- cdcos[i,1]
-        d <- cdcos[i,3]
+      for (j in seq(nrow(cdcos))){
+        c <- cdcos[j,1]
+        d <- cdcos[j,3]
         if (c < 0 && d >= 0){
-          t <- 180 + atan(cdcos[i,3]/cdcos[i,1])*(180/pi)
+          t <- 180 + atan(cdcos[j,3]/cdcos[j,1])*(180/pi)
           theta <- as.matrix(rbind(theta, t), ncol = 1)
         } else if (c < 0 && d < 0){
-          t <- -180 + atan(cdcos[i,3]/cdcos[i,1])*(180/pi)
+          t <- -180 + atan(cdcos[j,3]/cdcos[j,1])*(180/pi)
           theta <- as.matrix(rbind(theta, t), ncol = 1)
         } else {
-          t <- atan(cdcos[i,3]/cdcos[i,1])*(180/pi)
+          t <- atan(cdcos[j,3]/cdcos[j,1])*(180/pi)
           theta <- as.matrix(rbind(theta, t), ncol = 1)
         }
       }
@@ -258,6 +263,9 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
       disc <-  apply(a, 1, function(x) x %*% t(cdcos))
       ddisc <- as.matrix(cbind(ddisc, disc), ncol = 1)
     }
+    ddinfo <- 0.25 * (ddisc^2)
+    ddinfocap <- pmax(ddinfo, cap)
+    ddinfose <- 1/sqrt(ddinfocap)
   }
   if (!is.null(con.sphe)){
     if(!is.list(con.sphe)) stop("The speherical coordinates for constructs must be of type list")
@@ -283,7 +291,7 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
       con <- as.matrix(rbind(con,rbind(minnorm, maxnorm)), ncol = 3)
       ncos <- as.matrix(rbind(ncos,cdcos), ncol = 3)
       theta <- NULL
-      for (i in seq(nrow(cdcos))){ # finns bara en rad i cdcos?
+      for (i in seq(nrow(cdcos))){
         c <- cdcos[i,1]
         d <- cdcos[i,3]
         if (c < 0 && d >= 0){
@@ -303,11 +311,12 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
       disc <-  apply(a, 1, function(x) x %*% t(cdcos))
       ddisc <- as.matrix(cbind(ddisc, disc), ncol = 1)
     }
+    ddinfo <- 0.25 * (ddisc^2)
+    ddinfocap <- pmax(ddinfo, cap)
+    ddinfose <- 1/sqrt(ddinfocap)
   }
   a <- as.data.frame(a)
-  for (i in ncol(a)){
-    colnames(a) <- paste("a", 1:i, sep = "")
-  }
+  colnames(a) <- c("a1", "a2", "a3")
   diff <- as.data.frame(diff)
   for (i in ncol(diff)){
     colnames(diff) <- paste("d", 1:i, sep = "")
@@ -317,11 +326,14 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
     colnames(mdiff) <- paste("MDIFF", 1:i, sep = "")
   }
   disc <- as.data.frame(mdisc)
-  if (length(modid) == 2){
-    colnames(disc) <- c("MDISC")
-  }
+  info <- as.data.frame(info)
+  infose <- as.data.frame(infose)
+  colnames(info) <- c("Info")
+  colnames(infose) <- c("SE")
   if (length(modid) == 3){
     colnames(disc) <- c("DISC")
+  } else {
+    colnames(disc) <- c("MDISC")
   }
   dcos <- as.data.frame(dcos)
   colnames(dcos) <- c("Cos X", "Cos Y", "Cos Z")
@@ -343,21 +355,29 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
       rownames(csph) <- paste("C", 1:i, sep = "")
     }
     ddisc <- as.data.frame(ddisc)
+    ddinfo <- as.data.frame(ddinfo)
+    ddinfose <- as.data.frame(ddinfose)
     for (i in ncol(ddisc)){
       colnames(ddisc) <- paste("DDISC", 1:i, sep = "")
     }
+    for (i in ncol(ddinfo)){
+      colnames(ddinfo) <- paste("Info", 1:i, sep = "")
+    }
+    for (i in ncol(ddinfose)){
+      colnames(ddinfose) <- paste("SE", 1:i, sep = "")
+    }
   }
   if (!is.null(con.items)){
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles = sph, c.dir.cos = ncos , c.spherical = csph, ddisc = ddisc,
-                   dir.vec = dir.vec, scal.vec = scal.vec, con.items = con.items,  c.vec = con, fscores = trait)
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, info = info, infose = infose, mdiff = mdiff, dir.cos = dcos, angles = sph, c.dir.cos = ncos, c.spherical = csph, ddisc = ddisc,
+                   dir.vec = dir.vec, scal.vec = scal.vec, con.items = con.items,  c.vec = con, ddinfo = ddinfo, ddinfose = ddinfose, fscores = trait)
   } else if (!is.null(con.sphe)){
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles = sph, c.dir.cos = ncos , c.spherical = csph, ddisc = ddisc,
-                   dir.vec = dir.vec, scal.vec = scal.vec, con.sphe = con.sphe,  c.vec = con, fscores = trait)
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, info = info, infose = infose, mdiff = mdiff, dir.cos = dcos, angles = sph, c.dir.cos = ncos, c.spherical = csph, ddisc = ddisc,
+                   dir.vec = dir.vec, scal.vec = scal.vec, con.sphe = con.sphe,  c.vec = con,  ddinfo = ddinfo, ddinfose = ddinfose, fscores = trait)
   } else if (!is.null(trait)) {
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles = sph, diff = diff,
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, info = info, infose = infose, mdiff = mdiff, dir.cos = dcos, angles = sph, diff = diff,
                    dir.vec = dir.vec, scal.vec = scal.vec, fscores = trait)
   } else {
-    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, mdiff = mdiff, dir.cos = dcos, angles= sph, diff = diff,
+    D3mirt <- list(loadings = a, modid = modid, diff = diff, disc = disc, info = info, infose = infose, mdiff = mdiff, dir.cos = dcos, angles= sph, diff = diff,
                    dir.vec = dir.vec, scal.vec = scal.vec)
   }
   class(D3mirt) <- "D3mirt"

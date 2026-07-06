@@ -104,7 +104,9 @@ The package includes the following main functions.
 
 - `modid()`: D3mirt Model Identification
 - `D3mirt()`: 3D DMIRT Model Estimation
-- `plot()`: Graphical Output for `D3mirt()`
+- `D2mirt()`: 2D DMIRT Model Estimation
+- `plot()`: Graphical methods for `D3mirt()`
+- `information()`: Information Analysis
 
 ## Installation
 
@@ -116,9 +118,8 @@ version of the package, by using the following codes for `R`.
 install.packages('D3mirt')
 
 # Install the development version from GitHub
-# install.packages("devtools")
-# To include package vignette in the installation, add: build_vignettes = TRUE
-devtools::install_github("ForsbergPsychometrics/D3mirt")
+# install.packages("remotes")
+remotes::install_github("ForsbergPsychometrics/D3mirt", force = TRUE)
 ```
 
 In what follows, the `D3mirt` procedure, including the main functions
@@ -132,11 +133,18 @@ items measure moral preferences and are positively scored of Likert
 type, ranging from 1 = *Strongly Disagree* to 6 = *Strongly Agree*.
 Demographic variables include age and gender (male/female).
 
+The presentation below will focus mostly on using `D3mirt()`, since the
+example data is three-dimensional. Overall, the procedure for
+two-dimensional analysis is generally the same. For specific examples on
+using `D2mirt()` on two-dimensional data, the package manual is referred
+to.
+
 The D3mirt approach largely consists of the following three steps:
 
 1.  Model Identification
 2.  D3mirt model estimation
 3.  Plotting
+4.  Information
 
 Please see the vignette included in the package for more details on the
 `D3mirt` package, including extended examples of analysis and functions.
@@ -227,13 +235,13 @@ summary(id)
 #> W7Q10 0.7239 0.0854
 #> 
 #>       Item.2    ABS
-#> W7Q20 0.7723 0.0465
+#> W7Q20 0.7722 0.0465
 #> W7Q19 0.6436 0.0526
 #> W7Q18 0.6777 0.0782
 #> 
 #>    SS Loadings
 #> F2      5.3505
-#> F1      2.1127
+#> F1      2.1128
 #> F3      1.6744
 #> 
 #>            F2      F1      F3
@@ -250,13 +258,13 @@ summary(id)
 #> W7Q11  0.2085  0.0959  0.5488
 #> W7Q12  0.0755 -0.0853  0.5559
 #> W7Q13 -0.0176 -0.0153  0.7654
-#> W7Q14 -0.0407  0.1439  0.5629
+#> W7Q14 -0.0407  0.1440  0.5629
 #> W7Q15  0.1087  0.4556 -0.1111
 #> W7Q16  0.1759  0.2100  0.1152
 #> W7Q17  0.2160  0.5816  0.0261
 #> W7Q18 -0.0560  0.6777 -0.0782
 #> W7Q19  0.0589  0.6436  0.0526
-#> W7Q20 -0.0735  0.7723  0.0465
+#> W7Q20 -0.0735  0.7722  0.0465
 ```
 
 The `summary()` function prints the number of items and the number of
@@ -577,7 +585,9 @@ axes that can be rotated. In this illustration, however, all RGL devices
 are plotted inline as still shots displayed from two angles,
 $15^{\circ}$ (clockwise; default plot angle) and $90^{\circ}$. To change
 the plot output to $90^{\circ}$, use the `view` argument in the `plot()`
-function and change the first indicator from $15$ to $90$.
+function and change the first indicator from $15$ to $90$. Note that
+colors of item vectors can be changed with the `col` argument and colors
+of constructs with `c.col`.
 
 ``` r
 # Plot RGL device with constructs visible and named
@@ -913,7 +923,100 @@ An example of how the output can be described is as follows.
 > interaction effect in which higher levels of Conformity seem to be
 > associated with lower levels of Fairness.
 
-# 4. Exporting the RGL Device
+# 4. Information
+
+The information function displays item information, estimated in the
+`D3mirt()` and `D2mirt()` functions, respectively. Based on these
+estimates, confidence intervals are calculated, and basic descriptive
+statistics are presented. For more details on the mathematical
+definitions, se package documentation or vignette.
+
+The critical value for the confidence interval is indicated by the user
+using a percentage for the relevant confidence interval, e.g., 95 % CI
+(default), and the critical value is calculated as approximately 1.96 if
+using two decimal places in the information function. Note that the
+number of decimals in the output can be controlled using the `digits`
+argument (the default is set to four digits).
+
+``` r
+# Optional: Load the EFA data for this example directly from the package file
+load(system.file("extdata/mod1.Rdata", package = "D3mirt"))
+```
+
+``` r
+# 95 % CI is default
+# The example does not include constructs
+info <- information(mod1)
+#> 
+#> D3mirt: 20 items and 5 levels of difficulty
+#> 
+#> Compensatory model
+#> Model identification items: W7Q3, W7Q20
+#> 
+#> 
+#> MDISC Descriptives
+#>        Sum Info   Mean     SD Median Mean SE  SD SE Median SE
+#> Model   17.1095 0.8555 0.4469 0.8189  1.2323 0.4586    1.1052
+#> 
+#> 
+#>        MDISC   Info     SE CI Lower CI Upper
+#> W7Q1  2.0402 1.0406 0.9803   0.1188   3.9615
+#> W7Q2  2.6342 1.7348 0.7592   1.1462   4.1223
+#> W7Q3  2.7923 1.9492 0.7163   1.3884   4.1961
+#> W7Q4  1.9195 0.9212 1.0419  -0.1226   3.9617
+#> W7Q5  2.2442 1.2591 0.8912   0.4975   3.9909
+#> W7Q6  2.0225 1.0226 0.9889   0.0843   3.9607
+#> W7Q7  1.6710 0.6981 1.1969  -0.6749   4.0169
+#> W7Q8  1.8261 0.8336 1.0952  -0.3206   3.9727
+#> W7Q9  1.7425 0.7591 1.1478  -0.5070   3.9921
+#> W7Q10 1.7798 0.7919 1.1237  -0.4227   3.9823
+#> W7Q11 1.8262 0.8337 1.0952  -0.3203   3.9727
+#> W7Q12 1.2072 0.3643 1.6568  -2.0400   4.4544
+#> W7Q13 2.0553 1.0561 0.9731   0.1481   3.9625
+#> W7Q14 1.3211 0.4363 1.5139  -1.6461   4.2883
+#> W7Q15 0.9232 0.2131 2.1664  -3.3228   5.1692
+#> W7Q16 0.7699 0.1482 2.5978  -4.3217   5.8614
+#> W7Q17 1.7934 0.8041 1.1152  -0.3923   3.9791
+#> W7Q18 1.4217 0.5053 1.4067  -1.3354   4.1789
+#> W7Q19 1.6661 0.6940 1.2004  -0.6867   4.0189
+#> W7Q20 2.0437 1.0442 0.9786   0.1257   3.9618
+```
+
+The output in this example provides the same model information as the
+summary and print methods for the S3 objects (`D3mirt` or `D2mirt`).
+This is followed by descriptives of the MDISC, including the total sum
+of information and the mean, standard deviation, and median of the same.
+Next, the mean, standard deviation, and median of the standard errors
+are reported. If constructs were included in the model specification,
+DDISC descriptives are reported for each construct vector, following the
+same patterns as for MDISC.
+
+After the descriptives section, MDISC parameters per item are presented
+alongside item information, standard error, and confidence intervals
+calculated conditioned on the critical value set by the user. If
+constructs were used in the model estimation, the same information is
+reported per item for each construct. The output provides useful
+information for comparing optimized parameters and their measurement
+characteristics (based on the MDISC) vs. the directional parameters
+(based on the DDISC). Foremost, the DDISC parameters show that the
+items’ unidimensional capacity in the latent space is always lower than
+that of the DMIRT parameters, which relax the assumption of a single
+measurement continuum.
+
+It is, however, important to note that MDISC estimates represent the
+maximum discrimination of an item at its optimal angle in the
+multidimensional space. The MDISC parameters are, therefore, dependent
+on measurement direction and consequently not comparable unless the
+items are oriented identically. Summarizing MDISC parameters can,
+therefore, result in misleading interpretations if assumed to represent
+a sum of unidimensional information. In contrast, DDISC parameters are
+projected onto a specific, fixed construct vector and are constrained to
+a single shared orientation. They can, therefore, can be compared and
+aggregated under the assumption of unidimensionality. Note that the
+standard error calculation is capped to avoid extreme-value problems
+(see the manual for more information and options).
+
+# 5. Exporting the RGL Device
 
 Some options for exporting the RGL device are shown below. In addition,
 it is also possible to export graphical devices in R Markdown documents
@@ -941,7 +1044,8 @@ rgl::rgl.snapshot('RGLdevice.png',
 
 # Getting Help, Feedback, and Questions
 
-If you encounter a bug, please file an issue with a minimal reproducible
+For common troubleshooting issues, see package vignette for guidance. If
+you encounter a bug, please file an issue with a minimal reproducible
 example on GitHub (<https://github.com/ForsbergPyschometrics/D3mirt>).
 For questions and suggestions on how to improve the code, please contact
 me on GitHub or via email (<forsbergpsychometrics@gmail.com>).

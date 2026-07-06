@@ -51,7 +51,9 @@ The package includes the following main functions.
 
 -   `modid()`: D3mirt Model Identification
 -   `D3mirt()`: 3D DMIRT Model Estimation
--   `plot()`: Graphical Output for `D3mirt()`
+-   `D2mirt()`: 2D DMIRT Model Estimation
+-   `plot()`: Graphical methods for `D3mirt()`
+-   `information()`: Information Analysis
 
 ## Installation
 
@@ -62,18 +64,20 @@ You can install the `D3mirt` package from CRAN, or try the development version o
 install.packages('D3mirt')
 
 # Install the development version from GitHub
-# install.packages("devtools")
-# To include package vignette in the installation, add: build_vignettes = TRUE
-devtools::install_github("ForsbergPsychometrics/D3mirt")
+# install.packages("remotes")
+remotes::install_github("ForsbergPsychometrics/D3mirt", force = TRUE)
 ```
 
 In what follows, the `D3mirt` procedure, including the main functions and some of the more essential arguments, will be briefly described using the built-in data set "anes0809offwaves". The data set ($N = 1046, M_{age} = 51.33, SD = 14.56, 57\%$ Female) is a subset from the American National Election Survey (ANES) from the 2008-2009 Panel Study Off Wave Questionnaires, December 2009 (DeBell, et al, 2010; <https://electionstudies.org/data-center/2008-2009-panel-study/>). All items measure moral preferences and are positively scored of Likert type, ranging from 1 = *Strongly Disagree* to 6 = *Strongly Agree*. Demographic variables include age and gender (male/female).
+
+The presentation below will focus mostly on using `D3mirt()`, since the example data is three-dimensional. Overall, the procedure for two-dimensional analysis is generally the same. For specific examples on using `D2mirt()` on two-dimensional data, the package manual is referred to.
 
 The D3mirt approach largely consists of the following three steps:
 
 1.  Model Identification
 2.  D3mirt model estimation
 3.  Plotting
+4.  Information
 
 Please see the vignette included in the package for more details on the `D3mirt` package, including extended examples of analysis and functions.
 
@@ -175,7 +179,7 @@ In the output, the simple loading structure can be seen. Note that because the i
 
 # 3. Plotting
 
-The `plot()` method for objects of class `D3mirt` is built on the `rgl` package (Adler & Murdoch, 2023) for visualization with OpenGL. Graphing in default mode by calling `plot()` will return an RGL device appearing in the console as a three-dimensional interactive object containing vector arrows with the latent dimensions running along the orthogonal axes that can be rotated. In this illustration, however, all RGL devices are plotted inline as still shots displayed from two angles, $15^{\circ}$ (clockwise; default plot angle) and $90^{\circ}$. To change the plot output to $90^{\circ}$, use the `view` argument in the `plot()` function and change the first indicator from $15$ to $90$.
+The `plot()` method for objects of class `D3mirt` is built on the `rgl` package (Adler & Murdoch, 2023) for visualization with OpenGL. Graphing in default mode by calling `plot()` will return an RGL device appearing in the console as a three-dimensional interactive object containing vector arrows with the latent dimensions running along the orthogonal axes that can be rotated. In this illustration, however, all RGL devices are plotted inline as still shots displayed from two angles, $15^{\circ}$ (clockwise; default plot angle) and $90^{\circ}$. To change the plot output to $90^{\circ}$, use the `view` argument in the `plot()` function and change the first indicator from $15$ to $90$. Note that colors of item vectors can be changed with the `col` argument and colors of constructs with `c.col`.
 
 ```{r, eval = FALSE}
 # Plot RGL device with constructs visible and named
@@ -376,7 +380,30 @@ An example of how the output can be described is as follows.
 
 > In Figures 7 and 8 we can see a tendency for an age profile in which younger individuals could be described as less oriented towards Conformity. We can also observe a tendency for what could be an interaction effect in which higher levels of Conformity seem to be associated with lower levels of Fairness.
 
-# 4. Exporting the RGL Device
+# 4. Information
+
+The information function displays item information, estimated in the `D3mirt()` and `D2mirt()` functions, respectively. Based on these estimates, confidence intervals are calculated, and basic descriptive statistics are presented. For more details on the mathematical definitions, se package documentation or vignette.
+
+The critical value for the confidence interval is indicated by the user using a percentage for the relevant confidence interval, e.g., 95 % CI (default), and the critical value is calculated as approximately 1.96 if using two decimal places in the information function. Note that the number of decimals in the output can be controlled using the `digits` argument (the default is set to four digits).
+
+```{r}
+# Optional: Load the EFA data for this example directly from the package file
+load(system.file("extdata/mod1.Rdata", package = "D3mirt"))
+```
+```{r}
+# 95 % CI is default
+# The example does not include constructs
+info <- information(mod1)
+```
+
+The output in this example provides the same model information as the summary and print methods for the S3 objects (`D3mirt` or `D2mirt`). This is followed by descriptives of the MDISC, including the total sum of information and the mean, standard deviation, and median of the same. Next, the mean, standard deviation, and median of the standard errors are reported. If constructs were included in the model specification, DDISC descriptives are reported for each construct vector, following the same patterns as for MDISC. 
+
+After the descriptives section, MDISC parameters per item are presented alongside item information, standard error, and confidence intervals calculated conditioned on the critical value set by the user. If constructs were used in the model estimation, the same information is reported per item for each construct. The output provides useful information for comparing optimized parameters and their measurement characteristics (based on the MDISC) vs. the directional parameters (based on the DDISC). Foremost, the DDISC parameters show that the items' unidimensional capacity in the latent space is always lower than that of the DMIRT parameters, which relax the assumption of a single measurement continuum.
+
+It is, however, important to note that MDISC estimates represent the maximum discrimination of an item at its optimal angle in the multidimensional space. The MDISC parameters are, therefore, dependent on measurement direction and consequently not comparable unless the items are oriented identically. Summarizing MDISC parameters can, therefore, result in misleading interpretations if assumed to represent a sum of unidimensional information. In contrast, DDISC parameters are projected onto a specific, fixed construct vector and are constrained to a single shared orientation. They can, therefore, can be compared and aggregated under the assumption of unidimensionality.
+Note that the standard error calculation is capped to avoid extreme-value problems (see the manual for more information and options).
+
+# 5. Exporting the RGL Device
 
 Some options for exporting the RGL device are shown below. In addition, it is also possible to export graphical devices in R Markdown documents with `rgl::hook_webgl()` together with graphical options for knitr, as was done when creating the package vignette. When exporting images, it is good to use the `view` argument when calling `plot()` to adjust the angle of the device captured in the image file. In the function calls below, the angle of the device is set to $45^{\circ}$ rotation in the plane, $20^{\circ}$ tilt away from the $y$-axis, and a zoom factor of $0.6$ (the default is `c(15, 20, 0.6)`).
 
@@ -396,7 +423,7 @@ rgl::rgl.snapshot('RGLdevice.png',
 
 # Getting Help, Feedback, and Questions
 
-If you encounter a bug, please file an issue with a minimal reproducible example on GitHub (<https://github.com/ForsbergPyschometrics/D3mirt>). For questions and suggestions on how to improve the code, please contact me on GitHub or via email ([forsbergpsychometrics\@gmail.com](mailto:forsbergpsychometrics@gmail.com){.email}).
+For common troubleshooting issues, see package vignette for guidance. If you encounter a bug, please file an issue with a minimal reproducible example on GitHub (<https://github.com/ForsbergPyschometrics/D3mirt>). For questions and suggestions on how to improve the code, please contact me on GitHub or via email ([forsbergpsychometrics\@gmail.com](mailto:forsbergpsychometrics@gmail.com){.email}).
 
 # References
 

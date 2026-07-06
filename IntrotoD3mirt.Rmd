@@ -19,7 +19,6 @@ knitr::opts_chunk$set(
 ```{r setup, message = FALSE, include = FALSE}
 ##library(D3mirt)
 devtools::load_all()
-knitr::knit_hooks$set(webgl = hook_webgl)
 ```
 
 # `D3MIRT` Modeling
@@ -82,9 +81,14 @@ The package includes the following main functions.
 
 -   `modid()`: D3mirt Model Identification
 -   `D3mirt()`: 3D DMIRT Model Estimation
--   `plot()`: Graphical Output for `D3mirt()`
+-   `D2mirt()`: 2D DMIRT Model Estimation
+-   `plot()`: Graphical Methods for `D3mirt()`
+-   `information()`: Information Analysis
 
-In what follows, the `D3mirt` procedure and some of its functions and options will be described using the built-in data set "anes0809offwaves". The data set ($N = 1046, M_{age} = 51.33, SD = 14.56, 57\%$ Female) is a subset from the American National Election Survey (ANES) from the 2008-2009 Panel Study Off Wave Questionnaires, December 2009 (DeBell, et al, 2010; <https://electionstudies.org/data-center/2008-2009-panel-study/>). All items measure moral preferences and are positively scored of Likert type, ranging from 1 = *Strongly Disagree* to 6 = *Strongly Agree*. Demographic variables include age and gender (male/female).
+In what follows, the `D3mirt` procedure on two and some of its functions and options will be described using the built-in data set "anes0809offwaves". The data set ($N = 1046, M_{age} = 51.33, SD = 14.56, 57\%$ Female) is a subset from the American National Election Survey (ANES) from the 2008-2009 Panel Study Off Wave Questionnaires, December 2009 (DeBell, et al, 2010; <https://electionstudies.org/data-center/2008-2009-panel-study/>). All items measure moral preferences and are positively scored of Likert type, ranging from 1 = *Strongly Disagree* to 6 = *Strongly Agree*. Demographic variables include age and gender (male/female). 
+
+The presentation below will focus mostly on using `D3mirt()`, since the example data is three-dimensional. Overall, the procedure for two-dimensional analysis is generally the same. For specific examples on using `D2mirt()` on two-dimensional data, the package manual is referred to.
+
 
 The sections below are sorted under the following headings.
 
@@ -93,17 +97,16 @@ The sections below are sorted under the following headings.
 -   1.1. The `modid()` Function
     -   1.1.1. Item Selection
     -   1.1.2. The Model Identification Procedure
-    -   1.1.3. Trouble Shooting
 -   1.2. Criteria For Model Identification
 -   1.3. Limitations
 
-2.  `D3mirt` Model Estimation
+2.  `D3mirt` and `D2mirt` Model Estimation
 
--   2.1. The `D3mirt()` Function
+-   2.1. The `D3mirt()` and `D2mirt` Function
     -   2.1.1. Calling the Compensatory Model
     -   2.1.2. Calling the Orthogonal Model
     -   2.1.3. Constructs by Items
-    -   2.1.4. Constructs by Spherical Angles
+    -   2.1.4. Constructs by Spherical or Polar Angles
 
 3.  Plotting
 
@@ -116,12 +119,18 @@ The sections below are sorted under the following headings.
     -   3.2.1 Plotting All Respondents
     -   3.2.2 Plotting the Orthogonal Model
     -   3.2.3 Plotting Subgroups of Respondents
-    -   3.2.3 Plotting Confidence Intervals
+    -   3.2.4 Plotting Confidence Intervals
+    
+4.  Information
 
-4.  Exporting the RGL device
-5.  Getting Help, Feedback, and Questions
-6.  References
-7.  Appendix A: Compensatory Model Syntax
+5.  Exporting the RGL device
+
+6.  Getting Help, Troubleshooting, Feedback, and Questions
+    -   6.1 Troulbe shooting
+    
+7.  References
+
+8.  Appendix A: Compensatory Model Syntax
 
 # 1. Model Identification
 
@@ -157,9 +166,17 @@ load(system.file("./extdata/id.Rdata", package = "D3mirt"))
 load(system.file("extdata/id.Rdata", package = "D3mirt"))
 ```
 ```{r, eval = FALSE}
-# Call to modid()
+# Call to modid() using three factors (default)
 id <- modid(x)
 ```
+
+To identify a two-dimensional model (not shown here), just change the number of factors to `factors = 2`. 
+```{r, eval = FALSE}
+# Call to modid() using two factors
+id <- modid(x, factors = 2)
+```
+
+To investigate the thee diemsnional output, use `summary`.
 ```{r}
 summary(id)
 ```
@@ -178,42 +195,6 @@ Note that the absolute sum score is always assessed based on the number of facto
 
 The model identification procedure orders the entire model so that the strongest loading item, from the strongest factor, always aligns perfectly with the $x$-axis and that the other items follow thereon. The model identification process is described in more detail below.
 
-### 1.1.3. Trouble Shooting
-
-Sometimes, however, the model is hard to identify. If this happens, try the following in the suggested order. For more on the function arguments see the section below regarding the model identification procedure.
-
-1.  Change the rotation method in the EFA, e.g., change from *oblimin* to *varimax*.
-2.  Adjust the `lower` bound in `modid()`.
-3.  Override factor order with `fac.order`.
-4.  Adjust the `upper` bound in `modid()`.
-
-The latter (point 4) should, however, only be used as a last resort. This is because the upper bound sets the upper limit for item inclusion. Adjusting this limit too high compromises the necessary statistical requirements. The lower limit (point 2), however, only increases the size of the item pool used for the item selection. It is, therefore, recommended to adjust the lower limit up and down to see if the output differs, and from that make the final decision.
-
-```{r, eval = TRUE}
-# Assigns loadings from a to data frame x
-x <- id$loadings
-```
-```{r}
-# Call to modid with increased lower and higher bound
-# Set efa to false when using factor loadings as data frame
-a <- modid(x, efa = FALSE, lower = 1, upper = 1)
-summary(a)
-```
-
-In this case, we find that the second item "W7Q17" is new. Observing the statistical estimates, we can also see that this outcome is related to the increased `lower` bound, allowing weaker loading items to be included in the selection process. Both the previous item ("W7Q20") and the new item ("W7Q17") have an acceptable absolute sum score, however. We can also note that the increased `upper` bound allows more items to be included in the selection process. This is most notable in the first data frame for `Item.1`. In this case, however, this had no effect on the final selection.
-
-Another option (point 3) is to override the factor order with the `fac.order` argument. More specifically, `modid()` orders factor by squared factor loadings so that the strongest factor is used first, the second strongest factor is used second, and so on. Sometimes, however, there is only a very small difference between the squared factor loadings that, in turn, can cause problems, often only observable at later stages. In such situations, it can be helpful to rearrange the factor order manually to see if the model solution improves.
-
-Since the squared factor loadings for factors 2 and 3 in this example are somewhat similar, it could be useful to compare the final results after manually overriding the factor order. The latter is, however, outside of the scope of this vignette.
-
-```{r, eval = TRUE}
-# Override factor order by reversing columns in the original data frame
-b <- modid(x, efa = FALSE, fac.order = c(3, 2, 1))
-summary(b)
-```
-
-In this case, we find that item W7Q3, which was previously suggested for the $x$-axis, is now suggested for the $y$-axis. For the $x$-axis, we find a new item, W7Q13.
-
 ## 1.2. Criteria For Model Identification
 
 Model identification items should preferably (a) have an absolute sum score of $\leq .10$ and (b) have the highest factor loading scores on the factor of interest. Of these two criteria, (a) should be given the strongest weight in the selection decision. If these conditions cannot be met, the user is advised to proceed with caution since the loading scores, therefore, imply that an adequate orthogonal structure may not be empirically attainable. If problems in the model identification process occur, please follow the advice given above.
@@ -222,7 +203,9 @@ Model identification items should preferably (a) have an absolute sum score of $
 
 The `modid()` function is not limited to three-dimensional analysis and can be used on any number of dimensions. Although based on suggestions on model identification given by Reckase (2009) for this type of analysis, the function offers some expansions that introduce more precision. The latter foremost consists of incorporating the sum of squares and factor loadings in the item selection process (unless the user has not specified otherwise). Experience tells us that this is a good practice that often leads to better results compared to other known options. However, it is important to recognize that the model identification procedure only gives suggestions to the model specification, and there could be situations where the researcher should consider other methods. Note that two items can be found to identify the model do not imply successful outcomes when using this methodology (i.e., that the model is *good*). But it does suggest that the method *can* be used and the results can be interpreted in a meaningful way.
 
-# 2. D3mirt model estimation
+# 2. `D3mirt` and `D2mirt` model estimation
+
+The process for fitting a model with either `D3mirt()` or `D2mirt()` is the same with only minor exceptions. Foremost, `D2mirt()` only uses one model identification item, and adding a construct vector relies on polar angles; hence, only one angle is required (radial distance is constant). 
 
 ## 2.1. The `D3mirt()` Function
 
@@ -238,7 +221,7 @@ If constructs are used, the function also returns construct direction cosines, s
 
 To use the compensatory model, the user only needs to specify the model identification items from `modid()` in the `modid` argument when calling `D3mirt` as follows. In the example above, `modid()` selected items W7Q3 as item 1 and W7Q20 as item 2. Accordingly, to fit the compensatory model, simply impute a character vector containing the items in the `modid` argument.
 
-Note that because fitting the compensatory model in the `mirt()` function takes a long time, the item parameters for this example are contained in a data frame available in the package file "mod1.Rdata". To save time studying these examples, the package file can be loaded and used in the function call. For the interested user, a binary version (i.e., dichotonous items) of the same model is available in the package file "modbi.Rdata".
+Note that because fitting the compensatory model in the `mirt()` function takes a long time, the item parameters for this example are contained in a data frame available in the package file "mod1.Rdata". To save time studying these examples, the package file can be loaded and used in the function call. 
 
 ```{r, include = FALSE, eval = FALSE}
 load("mod1.Rdata")
@@ -246,10 +229,6 @@ load("mod1.Rdata")
 ```{r, eval = TRUE}
 # Optional: Load mod1 directly from the package file
 load(system.file("extdata/mod1.Rdata", package = "D3mirt"))
-```
-```{r, eval = FALSE}
-# Optional: Load mod1 as binary data
-load(system.file("extdata/modbi.Rdata", package = "D3mirt"))
 ```
 ```{r, eval = FALSE}
 # Call D3mirt() with the model identification items
@@ -351,6 +330,8 @@ For instance, this type of construct can contribute to the analysis by showing h
 
 # 3. Plotting
 
+The example below will only illustrate three-dimensional plotting since the example data is three dimensional. However, the general principles rae the same for pltting in two-dimensions. The only exception is the confidence interval which uses an standard deviation to add width to the elliptic disc in the two-dimensional plot. This is only for presentation purposes and holds no statistical meaning. 
+
 ## 3.1 The `plot()` Function
 
 The `plot()` method for class `D3mirt` objects is built on functions from the `rgl` package (Adler & Murdoch, 2023) for visualization with OpenGL. The output consists of a three-dimensional interactive RGL device, displaying vector arrows with the latent dimensions running along the orthogonal axes centered at zero. If polytomous items are used, each item will have multiple arrows, representing the multiple item step response functions, running along the same direction in the model.
@@ -359,7 +340,7 @@ When plotting the `D3mirt` model with `plot()`, it is possible to visually obser
 
 Graphing in default mode by calling `plot()` will return an RGL device that will appear in the console as a three-dimensional interactive object that can be rotated manually by the user. In this illustration, however, all RGL devices are plotted as inline interactive objects with the help of R markdown. Note that it is possible to plot the RGL device in an external window by setting `console = FALSE`. 
 
-```{r, testg1, webgl = TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot RGL device
 # Graphical output can be seen in Figure 1
 plot(mod1, scale = TRUE)
@@ -373,7 +354,7 @@ An example of how the output can be described could be the following.
 
 We can also study the orthogonal model by calling `plot()` and changing the first argument accordingly. This type of model is, however, less interesting for the purpose of studying item vectors because these simply form a cross pattern in the model space. The model can, however, be interesting plot when studying respondent trait scorers, which will be illustrated below. In the function call, all axes are also named following the content of the items using the `x.lab`, `y.lab`, and `z.lab` arguments. 
 
-```{r, testg2, webgl = TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot RGL device
 # Graphical output can be seen in Figure 2
 plot(mod2, x.lab = "Compassion", y.lab = "Conformity", z.lab = "Fairness")
@@ -387,9 +368,9 @@ It can be observed that the discrimination scores are lower for all items in the
 
 To get a better understanding of the interrelation of the data, constructs can be added to asses the average angle when grouping items. As mentioned above, in this example, the items have been grouped in constructs in an exploratory fashion, i.e., based on their observed location in the model. Note that item W7Q16 was not included in any of the constructs because of a high amount of model violation tendencies and notable within-multidimensionality.
 
-To plot constructs alongside item vectors, change to `constructs = TRUE`. The constructs can be named with strings as input to the `construct.lab` argument. In this example, construct labels were chosen based on item content.
+To plot constructs alongside item vectors, change to `constructs = TRUE`. The constructs can be named with strings as input to the `construct.lab` argument. In this example, construct labels were chosen based on item content. Note that colors of item vectors can be changed with the `col` argument and colors of constructs with `c.col`.
 
-```{r, testg3, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot RGL device with constructs visible and named
 # Graphical output can be seen in Figure 3
 plot(mod3, constructs = TRUE, construct.lab = c("Compassion", "Fairness", "Conformity"))
@@ -403,7 +384,7 @@ An example of how the output can be described is as follows.
 
 We can also study the construct indicated by spherical angles by calling `plot()` and changing the first argument to use the appropriate `D3mirt` object. Because these constructs are not empirical, however, the name argument is changed to use the more generic labels "Con 1", "Con 2", and "Con 3".
 
-```{r, testg4, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot RGL device with constructs visible
 # Graphical output can be seen in Figure 4
 plot(mod4, constructs = TRUE, construct.lab = c("Con 1", "Con 2", "Con 3"))
@@ -417,7 +398,7 @@ Studying the $DDISC$ scores for the constructs in the summary output above, it c
 
 A subset of items can be plotted for a more thorough investigation using the `items` argument. In the example below, all constructs are plotted together with the items used for the conformity construct. In the function call, the numerical indicators in the `items` argument follow the item order in the original data frame (see `?anes0809offwaves`).
 
-```{r, testg5, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # A selection of Conformity items from the model plotted with constructs
 # Graphical output can be seen in Figure 5
 plot(mod3, constructs = TRUE, items = c(15, 17, 18, 19, 20), 
@@ -428,7 +409,7 @@ plot(mod3, constructs = TRUE, items = c(15, 17, 18, 19, 20),
 
 The `plot()` function also allows plotting a single item by entering a number indicating what item should be displayed. As was mentioned above, the W7Q16 was not included in any of the constructs because the item showed signs of measurement problems. For example, the short vector arrows indicate high amounts of model violations and the location of the item in the model also indicates that the item is within-multidimensional and that it does not seem to belong to any construct explicitly. Typing $16$ in the `items` argument allows for a closer look.
 
-```{r, testg6, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Item W7Q16 has location 16 in the data set (gender and age excluded)
 # The item is plotted together with constructs to aid the visual interpretation
 # Graphical output can be seen in Figure 6
@@ -446,7 +427,7 @@ An example of how the output can be described is as follows.
 
 The user has the option of plotting one level of difficulty at a time with the `diff.level` argument studying the entire scale, a subset of items, or one item at a time. Note that *difficulty* refers to the number of item response functions in the items, i.e., the total number of response options minus one. In this case, $6$ response options were used, which means that the model has $5$ levels of difficulty.
 
-```{r, testg7, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot RGL device on item difficulty level 5
 # Graphical output can be seen in Figure 7
 plot(mod3, diff.level = 5)
@@ -458,7 +439,7 @@ plot(mod3, diff.level = 5)
 
 The `D3mirt()` function returns item vector coordinates estimated with and without the $MDISC$ as a scalar for the arrow length. When the $MDISC$ is not used for the arrow length, all item vector arrows are scaled to one unit length. This allows the user to graph the item vector arrows with `plot()` set to a uniform length. This can help reduce visual clutter in the graphical output. To view the item vector arrows without the $MDISC$, set `scale = FALSE`.
 
-```{r, testg8, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot RGL device with items in uniform length and constructs visible and named
 # Graphical output can be seen in Figure 8
 plot(mod3, scale = FALSE, constructs = TRUE, 
@@ -475,7 +456,7 @@ The `plot()` function can also display respondents in the three-dimensional mode
 
 To plot respondent scores using the default option, call `D3mirt()` and set `ìnd.scores` to `TRUE`. This will display respondents visualized as black spheres in the latent space. In the function call below, all items are hidden with `hide = TRUE` to reduce visual clutter, and `constructs` is set to FALSE (by default) for the same reason.
 
-```{r, testg9, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot profiles with item vector arrows hidden
 # Graphical output can be seen in Figure 9
 plot(mod3, hide = TRUE, ind.scores = TRUE, 
@@ -494,7 +475,7 @@ x <- anes0809offwaves
 
 Call `plot()` using the respondent gender data located in column two in x, i.e., $x[, 2]$, in the `levels` argument. Please note that the criteria variable used in `levels` must follow the same row order as the frame used when fitting the `D3mirt`object. That is, rows must refer to the same respondents, otherwise the color matching will most likely be wrong.
 
-```{r, testg10, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot profiles with item vector arrows hidden
 # Score levels: 1 = Blue ("male") and 2 = Red ("female")
 # Graphical output can be seen in Figure 10
@@ -513,12 +494,12 @@ An example of how the output can be described is as follows:
 
 If the `D3mirt` object was fitted using the orthogonal option, plotting all respondent scores can easily be done using the `ind.scores` argument set to `TRUE` as in the previous example. In the function call below, all arguments are the same, expcept that the `D3mirt` object is now the orthogonal version. As can be seen, plotting respondent trait scores using the orthogonal model slightly reduced the effect on gender seen when using the compensatory model. Note that this is not a general effect. Instead, the opposite can also be the case, i.e., that an effect appears because the model is not constrained to contain only strict unidimensions. It is, therefore, essential that the user justify using the orthogonal model because it is not, in itself, an empirical reflection of the data. It can, however, be a reflection of an idea.
 
-```{r, testg11, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Plot profiles with item vector arrows hidden
 # Score levels: 1 = Blue ("male") and 2 = Red ("female")
 # Graphical output can be seen in Figure 11
 plot(mod2, hide = TRUE, ind.scores = TRUE, levels = x[, 2], sphere.col = c("blue", "red"), 
-           x.lab = "Compassion", y.lab="Conformity", z.lab="Fairness"))
+           x.lab = "Compassion", y.lab="Conformity", z.lab="Fairness")
 ```
 
 ![Model 2, the orthogonal model, rotated $15^{\circ}$ showing respondents male trait scores (blue) and female trait scores (red).](./images/mod3blueredorth.png){width=100%}
@@ -554,7 +535,7 @@ colvec <- c(rep("red", 14),
             rep("blue", 16))
 ```
 
-```{r, testg12, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Call plot() with profile data on age with item vector arrows hidden
 # Use data frame z in the profiles argument and the criteria column 
 # from z in the levels argument
@@ -587,7 +568,7 @@ colvec <- c(rep("red", 14))
 
 To plot the *CI*, the `ci` argument is set to `TRUE`. The color of the spheres was also changed from the default `grey80` to `orange` in the example below. Note that the *CI* limit can be adjusted with the `ci.level` argument.
 
-```{r, testg13, webgl=TRUE, fig.width = 7, fig.height = 7, eval = FALSE}
+```{r, eval = FALSE}
 # Call plot() with profile data on age with item vector arrows hidden
 # Graphical output can be seen in Figure 13
 plot(mod3, hide = TRUE, profiles = z1, levels = z1[, 4], sphere.col = colvec, 
@@ -601,7 +582,41 @@ An example of how the output can be described is as follows.
 
 > In Figure 13, we can see a tendency for a profile on age in which younger individuals could be described as less oriented towards Conformity. We can also observe a tendency for what could be an interaction effect in which higher levels of Conformity seem to be associated with lower levels of Fairness.
 
-# 4. Exporting The RGL Device
+# 4. Information
+
+Information in IRT tells the quality of the test and item. In brief, higher amounts of information imply that the test or item is efficient in separating respondents on the latent trait. The information function displays item information, estimated in the `D3mirt()` and `D2mirt()` functions, respectively. Based on these estimates, confidence intervals are calculated, and basic descriptive statistics are presented.
+
+Information is defined as 
+
+$$I_i(\theta) := P_i(\theta) Q_i(\theta)a_i^2,$$
+
+and taking measurement direction into account gives
+
+$$I_i(\theta, \omega) := P_i(\theta) Q_i(\theta) \bigg( \sum^n a_i \cos \omega \bigg)^2.$$
+
+Taking the inverse gives the standard error, defined as 
+
+$$SE(\hat{a}_i) := \frac{1}{\sqrt{I(\hat{a}_i)}},$$
+
+for discrimination estimator $\hat{a}_i$. The confidence intervals for the MDISC and DDISC parameters are calculated as 
+
+$$CI = \hat{a}_i \pm z \times SE(\hat{a}_i),$$
+
+for critical value $z$. The critical value is indicated by the user using a percentage for the relevant confidence interval, e.g., 95 % CI (default), and the critical value is calculated as approximately 1.96 if using two decimal places in the information function. Note that the number of decimals in the output can be controlled using the `digits` argument (the default is set to four digits).
+
+```{r}
+# 95 % CI is default
+info <- information(mod3)
+```
+
+The output in this example provides the same model information as the summary and print methods for the S3 objects (`D3mirt` or `D2mirt`). This is followed by descriptives of the MDISC, including the total sum of information and the mean, standard deviation, and median of the same. Next, the mean, standard deviation, and median of the standard errors are reported. If constructs were included, as in the example above, in the model specification, DDISC descriptives are reported for each construct vector, following the same patterns as for MDISC.  
+
+It is, however, important to note that MDISC estimates represent the maximum discrimination of an item at its optimal angle in the multidimensional space. The MDISC parameters are, therefore, dependent on measurement direction and consequently not comparable unless the items are oriented identically. Summarizing MDISC parameters can, therefore, result in misleading interpretations if assumed to represent a sum of unidimensional information. In contrast, DDISC parameters are projected onto a specific, fixed construct vector and are constrained to a single shared orientation. They can, therefore, can be compared and aggregated under the assumption of unidimensionality.
+Note that the standard error calculation is capped to avoid extreme-value problems (see the manual for more information and options).
+
+After the descriptives section, MDISC parameters per item are presented alongside item information, standard error, and confidence intervals calculated conditioned on the critical value set by the user. Because constructs were used in the model estimation, the same information is reported per item for each construct. The output provides useful information for comparing optimized parameters and their measurement characteristics (based on the MDISC) vs. the directional parameters (based on the DDISC). Foremost, the DDISC parameters show that the items' unidimensional capacity in the latent space is always lower than that of the DMIRT parameters, which relax the assumption of a single measurement continuum.
+
+# 5. Exporting The RGL Device
 
 Below are some options for exporting the RGL device. In addition, it is also possible to export graphical devices in R Markdown documents with `rgl::hook_webgl()` together with graphical options for knitr, as was done when creating this vignette. When exporting images, it is good to use the `view` argument when calling `plot()` to adjust the angle of the device captured in the image file. In the function calls below, the angle of the device is set to $45^{\circ}$ rotation in the plane, $20^{\circ}$ tilt away from the $y$-axis, and a zoom factor of $0.6$ (the default is `c(15, 20, 0.6)`).
 
@@ -619,9 +634,53 @@ rgl::rgl.snapshot('RGLdevice.png',
                     fmt = 'png')
 ```
 
-# 5. Getting Help, Feedback, and Questions
+# 6. Getting Help, Troubleshooting, Feedback, and Questions
 
 If you encounter a bug, please file an issue with a minimal reproducible example on GitHub (<https://github.com/ForsbergPyschometrics/D3mirt>). For questions and suggestions on how to improve the code, please contact me on GitHub or via email ([forsbergpsychometrics\@gmail.com](mailto:forsbergpsychometrics@gmail.com){.email}).
+
+## 6.1 Troubleshooting
+
+1.  Change the rotation method in the EFA, e.g., change from *oblimin* to *varimax*.
+2.  Adjust the `lower` bound in `modid()`.
+3.  Override factor order with `fac.order`.
+4.  Adjust the `upper` bound in `modid()`.
+5.  Add `technical = list(NCYCLES = 1000)` as an extra argument. 
+6.  Change `type`or `c.type` to simpler arrow like `lines` in `plot().
+
+Points 1 to 4 below regard issues with the `modid()` function specifically. Point 5, however, can be used on all functions that rely on `mirt()` for factor analysis. These functions are `modid()`, `D2mirt()`, and `D3mirt()`. More specifically, the function call resolves a warning from `mirt()` by providing more time to find a stable solution during the factor estimation process. Regarding point 6, sometimes RGL graphics throws an error due to arrow location in the model. A simple solution is to change from `rotation` in `type`or `c.type` when calling `plot()`, which has a simpler graphical structure and hence is more stable. 
+
+Point 4 should, however, only be used as a last resort when calling `modid()`. This is because the upper bound sets the upper limit for item inclusion. Adjusting this limit too high compromises the necessary statistical requirements. The lower limit (point 2), however, only increases the size of the item pool used for the item selection. It is therefore recommended to adjust the lower limit up or down to see whether the output differs, and, based on that, make the final decision.
+
+```{r, eval = TRUE}
+# Assigns loadings from a to data frame x
+x <- id$loadings
+```
+```{r}
+# Call to modid with increased lower and higher bound
+# Set efa to false when using factor loadings as data frame
+a <- modid(x, efa = FALSE, lower = 1, upper = 1)
+summary(a)
+```
+
+In this case, we find that the second item "W7Q17" is new. Observing the statistical estimates, we can also see that this outcome is related to the increased `lower` bound, allowing weaker loading items to be included in the selection process. Both the previous item ("W7Q20") and the new item ("W7Q17") have an acceptable absolute sum score, however. We can also note that the increased `upper` bound allows more items to be included in the selection process. This is most notable in the first data frame for `Item.1`. In this case, however, this had no effect on the final selection.
+
+Another option (point 3) is to override the factor order with the `fac.order` argument. More specifically, `modid()` orders factor by squared factor loadings so that the strongest factor is used first, the second strongest factor is used second, and so on. Sometimes, however, there is only a very small difference between the squared factor loadings that, in turn, can cause problems, often only observable at later stages. In such situations, it can be helpful to rearrange the factor order manually to see if the model solution improves.
+
+Since the squared factor loadings for factors 2 and 3 in this example are somewhat similar, it could be useful to compare the final results after manually overriding the factor order. The latter is, however, outside of the scope of this vignette.
+
+```{r, eval = TRUE}
+# Override factor order by reversing columns in the original data frame
+b <- modid(x, efa = FALSE, fac.order = c(3, 2, 1))
+summary(b)
+```
+
+In this case, we find that item W7Q3, which was previously suggested for the $x$-axis, is now suggested for the $y$-axis. For the $x$-axis, we find a new item, W7Q13.
+
+Regarding point 5, adding the `technical = list(NCYCLES = 1000)` argument is very straight forward. The example below illustrates the simple procedure on a call to `D3mirt()`.
+```{r, eval = FALSE}
+# Call D3mirt() with the model identification items
+mod1 <- D3mirt(x, modid = c("W7Q3", "W7Q20"), technical = list(NCYCLES = 1000))
+```
 
 # 6. References
 

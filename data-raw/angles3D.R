@@ -1,4 +1,4 @@
-## code to prepare `angles` dataset goes here
+## code to prepare `angles3D` dataset goes here
 a <- matrix(c(1, 0, 0,
               0, 1, 0,
               0, 0, 1,
@@ -85,5 +85,6 @@ z <- cbind(z, s)
 
 rownames(z) <- c(1:42)
 colnames(z) <- c("a1", "a2", "a3", "d", "Theta", "Phi")
-angles <- z
-usethis::use_data(angles, overwrite = TRUE)
+angles3D <- z
+
+usethis::use_data(angles3D, overwrite = TRUE)
