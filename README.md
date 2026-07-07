@@ -1049,7 +1049,7 @@ rgl::rgl.snapshot('RGLdevice.png',
 
 For common troubleshooting issues, see package vignette for guidance. If
 you encounter a bug, please file an issue with a minimal reproducible
-example on GitHub (<https://github.com/ForsbergPyschometrics/D3mirt>).
+example on GitHub (<https://github.com/ForsbergPsychometrics/D3mirt>).
 For questions and suggestions on how to improve the code, please contact
 me on GitHub or via email (<forsbergpsychometrics@gmail.com>).
 

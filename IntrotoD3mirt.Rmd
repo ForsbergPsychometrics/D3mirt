@@ -278,7 +278,7 @@ summary(mod2)
 As can be seen, all items only load on one of the three dimensions, all direction cosines are, therefore, 1 or 0, and the spherical coordinates are either $0^{\circ}$ or $90^{\circ}$. Note that converting to spherical coordinates in the case the item is oriented strictly along the $y$-axis implies dividing with $\cos (0)$ in the $\arctan$ function. Because this operation is undefined, it is reported as `NaN` in the output above.
 
 To fit a two-dimensional DMIRT model (not shown here), use two nested item lists. 
-```{r}
+```{r, eval = FALSE}
 # misfitting item W7Q16 removed in data set y
 mod2 <- D2mirt(y, modid = list(c(1:14),
                              c(15:19)))
@@ -648,7 +648,7 @@ rgl::rgl.snapshot('RGLdevice.png',
 
 # 6. Getting Help, Troubleshooting, Feedback, and Questions
 
-If you encounter a bug, please file an issue with a minimal reproducible example on GitHub (<https://github.com/ForsbergPyschometrics/D3mirt>). For questions and suggestions on how to improve the code, please contact me on GitHub or via email ([forsbergpsychometrics\@gmail.com](mailto:forsbergpsychometrics@gmail.com){.email}).
+If you encounter a bug, please file an issue with a minimal reproducible example on GitHub (<https://github.com/ForsbergPsychometrics/D3mirt>). For questions and suggestions on how to improve the code, please contact me on GitHub or via email ([forsbergpsychometrics\@gmail.com](mailto:forsbergpsychometrics@gmail.com){.email}).
 
 ## 6.1 Troubleshooting
 
