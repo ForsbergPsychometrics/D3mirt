@@ -1,5 +1,5 @@
-── R CMD check results ───────── D3mirt 2.0.5.9000 ────
-Duration: 13m 55.2s
+── R CMD check results ───────────────────── D3mirt 2.1.0 ────
+Duration: 13m 49.3s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
