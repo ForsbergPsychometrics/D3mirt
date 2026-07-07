@@ -22,7 +22,7 @@ library(D3mirt)
 
 <br>
 
-[![](https://github.com/ForsbergPyschometrics/D3mirt/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ForsbergPyschometrics/D3mirt/actions/workflows/R-CMD-check.yaml) 
+[![](https://github.com/ForsbergPsychometrics/D3mirt/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ForsbergPsychometrics/D3mirt/actions/workflows/R-CMD-check.yaml) 
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06523/status.svg)](https://doi.org/10.21105/joss.06523)
 
 # `D3MIRT` Modeling
