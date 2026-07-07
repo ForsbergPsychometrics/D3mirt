@@ -6,8 +6,8 @@ Authors@R:
            comment = c(ORCID = "0000-0002-5228-9729"))
 Description: For identifying, estimating, and plotting descriptive multidimensional item response theory models, restricted to 2D and 3D and dichotomous or polytomous data that fit the two-parameter logistic model or the graded response model. The method is primarily exploratory and centered on the plot function, which exposes item characteristics and constructs, represented by vector arrows, within a three-dimensional interactive latent space. The results can be useful for item-level analysis as well as test development.
 License: GPL (>= 3)
-URL: https://github.com/ForsbergPyschometrics/D3mirt
-BugReports: https://github.com/ForsbergPyschometrics/D3mirt/issues
+URL: https://github.com/ForsbergPsychometrics/D3mirt
+BugReports: https://github.com/ForsbergPsychometrics/D3mirt/issues
 Depends:
     R (>= 3.6.0)
 Imports:

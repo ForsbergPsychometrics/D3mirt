@@ -215,7 +215,8 @@ load(system.file("extdata/id.Rdata", package = "D3mirt"))
 
 ``` r
 # Call to modid() with x, containing factors scores from the EFA
-# Observe that the efa argument is set to false 
+# Observe that the EFA argument is set to false 
+# For 2D analysis set argument factors = 2
 id <- modid(x)
 ```
 
@@ -348,6 +349,8 @@ load(system.file("extdata/mod3.Rdata", package = "D3mirt"))
 # Call to D3mirt(), including optional nested lists for three constructs
 # Item W7Q16 is not included in any construct because of model violations
 # The model violations for the item can be seen when plotting the model
+# Items "W7Q3" and "W7Q20" are model identification items
+# For 2D modelling only one model identification item is used
 con <- list(c(1:10),
             c(11:14),
             c(15:20))

@@ -136,7 +136,7 @@ The sections below are sorted under the following headings.
 
 ## 1.1 The `modid()` Function
 
-For the `D3mirt` analysis, two items with the following properties must be chosen to identify the compensatory model (Reckase, 2009). The first item should not load on the second and third axes ($y$ and $z$), while the second item should not load on the third axis ($z$). If this can be empirically achieved, creating the orthogonal structure necessary for the analysis will be possible. The `modid()` function can help with this step in the process by suggesting what items to use. The function does this based on an algorithmic approach that uses factor and item loading strength to order the model.
+For the `D3mirt` analysis, two items with the following properties must be chosen to identify the compensatory model (Reckase, 2009). The first item should not load on the second and third axes ($y$ and $z$), while the second item should not load on the third axis ($z$). If this can be empirically achieved, creating the orthogonal structure necessary for the analysis will be possible. The `modid()` function can help with this step in the process by suggesting what items to use. The function does this based on an algorithmic approach that uses factor and item loading strength to order the model. Note that for `D2mirt()`, only one item is required to identify the model, i.e., one item set not to load on the second dimension in the model. 
 
 ### 1.1.1. Item Selection
 
@@ -234,7 +234,6 @@ load(system.file("extdata/mod1.Rdata", package = "D3mirt"))
 # Call D3mirt() with the model identification items
 mod1 <- D3mirt(x, modid = c("W7Q3", "W7Q20"))
 ```
-
 The `D3mirt()` function prints a short report containing the number of items used and the levels of difficulty of the items when the estimation is done. If construct vectors are used, the function will also print the number of construct vectors and the names of the items included in each construct (see examples below). The `summary()` function is used to investigate the resulting DMIRT estimates.
 
 ```{r}
@@ -243,6 +242,12 @@ summary(mod1)
 ```
 
 The summary function displays the factor loadings and the difficulty parameters from the compensatory model. Examples of how DMIRT estimates can be used when reporting results are given below in the item and dimensionality analysis.
+
+To fit a two-dimensional DMIRT model (not shown here), just use one model identification item. 
+```{r, eval = FALSE}
+# Call D2mirt() with one model identification item
+mod1 <- D2mirt(x, modid = "W7Q10")
+```
 
 ### 2.1.2. Calling the Orthogonal Model
 
@@ -271,6 +276,13 @@ summary(mod2)
 ```
 
 As can be seen, all items only load on one of the three dimensions, all direction cosines are, therefore, 1 or 0, and the spherical coordinates are either $0^{\circ}$ or $90^{\circ}$. Note that converting to spherical coordinates in the case the item is oriented strictly along the $y$-axis implies dividing with $\cos (0)$ in the $\arctan$ function. Because this operation is undefined, it is reported as `NaN` in the output above.
+
+To fit a two-dimensional DMIRT model (not shown here), use two nested item lists. 
+```{r}
+# misfitting item W7Q16 removed in data set y
+mod2 <- D2mirt(y, modid = list(c(1:14),
+                             c(15:19)))
+```
 
 ### 2.1.3. Constructs by Items
 

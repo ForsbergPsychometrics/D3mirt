@@ -82,7 +82,8 @@ modid <- function(x, efa = TRUE, factors = 3, lower = 0.5, upper = .10, fac.orde
   if(any(!x == round(x))) warning("Set efa to FALSE if the data frame contains factor loadings")
   e <- mirt::mirt(x, model = factors, itemtype = itemtype, method = method, ...)
   f <- mirt::summary(e, rotate = rotate, verbose = FALSE)
-  x <- data.frame(f$rotF)
+  x <- unclass(f$rotF)
+  x <- as.matrix(x)
   }
   if (is.null(fac.order)){
     y <- x[,order(colSums(x^2), decreasing = TRUE)]
