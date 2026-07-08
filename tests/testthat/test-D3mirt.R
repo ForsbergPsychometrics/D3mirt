@@ -6,6 +6,7 @@ test_that("Test unit D3mirt and plot", {
                    c(19:21), c(22:24), c(25:27),
                    c(28:30), c(31:33), c(34:36),
                    c(37:39), c(40:42)))
+  x$ddinfose
   testthat::expect_snapshot(x)
   testthat::expect_snapshot(print(x))
   testthat::expect_snapshot(summary(x))
