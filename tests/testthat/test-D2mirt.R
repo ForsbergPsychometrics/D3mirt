@@ -6,7 +6,7 @@ test_that("Test unit D2mirt and plot", {
   testthat::expect_snapshot(x)
   testthat::expect_snapshot(print(x))
   testthat::expect_snapshot(summary(x))
-  testthat::expect_snapshot(information(x))
+  testthat::expect_snapshot(information(x, digits = 3))
   pol <- data.frame(angles2D[, 4])
   mdisc <- x$mdisc
   mdiff <- x$mdiff
@@ -36,5 +36,5 @@ test_that("Test unit D2mirt and plot", {
   testthat::expect_snapshot(x)
   testthat::expect_snapshot(print(x))
   testthat::expect_snapshot(summary(x))
-  testthat::expect_snapshot(information(x, CI = 0.90))
+  testthat::expect_snapshot(information(x, CI = 0.90, digits = 3))
 })
