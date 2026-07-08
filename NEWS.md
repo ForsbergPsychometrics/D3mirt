@@ -1,3 +1,5 @@
+# D3mirt (development version)
+
 # D3mirt 2.1.0
 - D2mirt function and plot method implented for 2D modeling
 - Information function introduced for information and standard error analysis
