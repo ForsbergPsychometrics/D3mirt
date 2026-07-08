@@ -9,7 +9,7 @@ test_that("Test unit D3mirt and plot", {
   testthat::expect_snapshot(x)
   testthat::expect_snapshot(print(x))
   testthat::expect_snapshot(summary(x))
-  testthat::expect_snapshot(information(x, digits = 3))
+  testthat::expect_snapshot(information(x, digits = 6))
   sph <- angles3D[, 5:6]
   mdisc <- x$mdisc
   mdiff <- x$mdiff
@@ -43,5 +43,5 @@ test_that("Test unit D3mirt and plot", {
   testthat::expect_snapshot(x)
   testthat::expect_snapshot(print(x))
   testthat::expect_snapshot(summary(x))
-  testthat::expect_snapshot(information(x, CI = 0.90, digits = 3))
+  testthat::expect_snapshot(information(x, CI = 0.90, digits = 6))
 })
