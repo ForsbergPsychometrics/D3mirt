@@ -614,11 +614,11 @@ for discrimination estimator $\hat{a}_i$. The confidence intervals for the MDISC
 
 $$CI = \hat{a}_i \pm z \times SE(\hat{a}_i),$$
 
-for critical value $z$. The critical value is indicated by the user using a percentage for the relevant confidence interval, e.g., 95 % CI (default), and the critical value is calculated as approximately 1.96 if using two decimal places in the information function. Note that the number of decimals in the output can be controlled using the `digits` argument (the default is set to four digits).
+for critical value $z$. The critical value is indicated by the user using a percentage for the relevant confidence interval, e.g., 95 % CI (default `ci = 0.95`), and the critical value is calculated as approximately 1.96 if using two decimal places in the information function. Note that the number of decimals in the output can be controlled using the `digits` argument (the default is set to four digits).
 
 ```{r}
 # 95 % CI is default
-info <- information(mod3)
+information(mod3)
 ```
 
 The output in this example provides the same model information as the summary and print methods for the S3 objects (`D3mirt` or `D2mirt`). This is followed by descriptives of the MDISC, including the total sum of information and the mean, standard deviation, and median of the same. Next, the mean, standard deviation, and median of the standard errors are reported. If constructs were included, as in the example above, in the model specification, DDISC descriptives are reported for each construct vector, following the same patterns as for MDISC.  

@@ -102,11 +102,11 @@ scaled to an arbitrary length.
 
 The package includes the following main functions.
 
-- `modid()`: D3mirt Model Identification
-- `D3mirt()`: 3D DMIRT Model Estimation
-- `D2mirt()`: 2D DMIRT Model Estimation
+- `modid()`: D3mirt model identification
+- `D3mirt()`: 3D DMIRT Model estimation
+- `D2mirt()`: 2D DMIRT model estimation
 - `plot()`: Graphical methods for `D3mirt()`
-- `information()`: Information Analysis
+- `information()`: Information method
 
 ## Installation
 
@@ -144,7 +144,7 @@ The D3mirt approach largely consists of the following three steps:
 1.  Model Identification
 2.  D3mirt model estimation
 3.  Plotting
-4.  Information
+4.  Information analysis
 
 Please see the vignette included in the package for more details on the
 `D3mirt` package, including extended examples of analysis and functions.
@@ -928,7 +928,7 @@ An example of how the output can be described is as follows.
 
 # 4. Information
 
-The information function displays item information, estimated in the
+The information method displays item information, estimated in the
 `D3mirt()` and `D2mirt()` functions, respectively. Based on these
 estimates, confidence intervals are calculated, and basic descriptive
 statistics are presented. For more details on the mathematical
@@ -936,10 +936,11 @@ definitions, se package documentation or vignette.
 
 The critical value for the confidence interval is indicated by the user
 using a percentage for the relevant confidence interval, e.g., 95 % CI
-(default), and the critical value is calculated as approximately 1.96 if
-using two decimal places in the information function. Note that the
-number of decimals in the output can be controlled using the `digits`
-argument (the default is set to four digits).
+(default `ci = 0.95`), and the critical value is calculated as
+approximately 1.96 if using two decimal places in the information
+function. Note that the number of decimals in the output can be
+controlled using the `digits` argument (the default is set to four
+digits).
 
 ``` r
 # Optional: Load the EFA data for this example directly from the package file
@@ -949,7 +950,7 @@ load(system.file("extdata/mod1.Rdata", package = "D3mirt"))
 ``` r
 # 95 % CI is default
 # The example does not include constructs
-info <- information(mod1)
+information(mod1)
 #> 
 #> D3mirt: 20 items and 5 levels of difficulty
 #> 

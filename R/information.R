@@ -2,7 +2,7 @@
 #'
 #' @description A information and standard error analysis function for [D3mirt::D3mirt()] and [D3mirt::D2mirt()].
 #' @param x An x of class `D3mirt` or `D2mirt`.
-#' @param CI Critical value for the confidence interval based on percentage. The default is `CI = 0.95`.
+#' @param ci Critical value for the confidence interval based on percentage. The default is `ci = 0.95`.
 #' @param digits The number of digits shown per estimate. The default is `digits = 4`.
 #' @param ... Additional arguments.
 #'
@@ -50,12 +50,12 @@
 #' information(mod)
 #' }
 #' @export
-information <- function(x, CI = 0.95, digits = 4, ...) {
+information <- function(x, ci = 0.95, digits = 4, ...) {
   UseMethod("information")
 }
 #' @export
-information.D2mirt <- function(x, CI = 0.95, digits = 4, ...){
-  alpha <- 1 - CI
+information.D2mirt <- function(x, ci = 0.95, digits = 4, ...){
+  alpha <- 1 - ci
   area <- alpha / 2
   z <- qnorm(1 - area)
     if (length(x$diff) > 1){
@@ -222,8 +222,8 @@ information.D2mirt <- function(x, CI = 0.95, digits = 4, ...){
   }
 }
 #' @export
-information.D3mirt <- function(x, CI = 0.95, ..., digits = 4){
-  alpha <- 1 - CI
+information.D3mirt <- function(x, ci = 0.95, ..., digits = 4){
+  alpha <- 1 - ci
   area <- alpha / 2
   z <- qnorm(1 - area)
     if (length(x$diff) > 1){

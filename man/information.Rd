@@ -4,12 +4,12 @@
 \alias{information}
 \title{Item Information and Standard Errors}
 \usage{
-information(x, CI = 0.95, digits = 4, ...)
+information(x, ci = 0.95, digits = 4, ...)
 }
 \arguments{
 \item{x}{An x of class \code{D3mirt} or \code{D2mirt}.}
 
-\item{CI}{Critical value for the confidence interval based on percentage. The default is \code{CI = 0.95}.}
+\item{ci}{Critical value for the confidence interval based on percentage. The default is \code{ci = 0.95}.}
 
 \item{digits}{The number of digits shown per estimate. The default is \code{digits = 4}.}
 
