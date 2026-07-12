@@ -119,7 +119,7 @@ D2mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.pol = NU
     if (is.null(model)) stop("The model must be identified, use model identification items or constrain all items to parallell with the axes")
     if (length(unique(x[, 1])) > 2 && itemtype == "2PL") stop("Use the GRM as item model if the items have more than two response options")
     if (length(unique(x[, 1])) == 2 && itemtype == "graded") warning("Use the 2PL as item model if the items have two response options")
-    y <- mirt::mirt(x, model = model, itemtype = itemtype, SE = FALSE, method = method.mirt)
+    y <- mirt::mirt(x, model = model, itemtype = itemtype, SE = FALSE, method = method.mirt, ...)
     trait <- mirt::fscores(y, method = method.fscores, full.scores = TRUE, full.scores.SE = FALSE, QMC = QMC)
     trait <- as.matrix(cbind(trait, F3 = rep(0, nrow(x))))
     k <- y@Data$K[1]-1

@@ -173,7 +173,7 @@ D3mirt <- function(x, modid = NULL, model = NULL, con.items = NULL, con.sphe = N
     if (is.null(model)) stop("The model must be identified, use model identification items or constrain all items to parallell with the axes")
     if (length(unique(x[, 1])) > 2 && itemtype == "2PL") stop("Use the GRM as item model if the items have more than two response options")
     if (length(unique(x[, 1])) == 2 && itemtype == "graded") warning("Use the 2PL as item model if the items have two response options")
-    x <- mirt::mirt(x, model = model, itemtype = itemtype, SE = FALSE, method = method.mirt)
+    x <- mirt::mirt(x, model = model, itemtype = itemtype, SE = FALSE, method = method.mirt, ...)
     trait <- mirt::fscores(x, method = method.fscores, full.scores = TRUE, full.scores.SE = FALSE, QMC = QMC)
     k <- x@Data$K[1]-1
     x <- data.frame(mirt::coef(x, simplify=TRUE)$"items"[, 1:(3+k)])
